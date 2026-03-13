@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="Learn HL7 FHIR from scratch — a simple guide for healthcare business analysts. No coding experience required."/>
+  <title>FHIR Learn — HL7 FHIR for Healthcare Analysts</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="styles/main.css"/>
+  <link rel="stylesheet" href="styles/home.css"/>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon">🏥</div>
+      <span class="nav-logo-text">FHIR Learn</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html" class="active">🏠 Home</a></li>
+      <li><a href="pages/what-is-api.html">🔌 What is an API?</a></li>
+      <li><a href="pages/fhir-basics.html">📘 FHIR Basics</a></li>
+      <li><a href="pages/resources.html">📦 Resources</a></li>
+      <li><a href="pages/examples.html">💡 Examples <span class="nav-badge">JSON</span></a></li>
+      <li><a href="pages/api-practice.html">🧪 API Practice</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg-grid"></div>
+  <div class="hero-glow hero-glow-1"></div>
+  <div class="hero-glow hero-glow-2"></div>
+
+  <div class="container hero-content">
+    <div class="hero-eyebrow">
+      <span>🏥</span> Made for Healthcare Business Analysts
+    </div>
+    <h1>
+      Understand <span class="gradient-text">HL7 FHIR</span><br/>
+      — No Tech Background Required
+    </h1>
+    <p class="hero-subtitle">
+      FHIR is the modern standard for sharing patient data between hospitals, 
+      clinics, apps, and systems. Learn what it is, how it works, 
+      and why it matters — with plain English explanations and real examples.
+    </p>
+    <div class="hero-actions">
+      <a href="pages/what-is-api.html" class="btn btn-primary">
+        Start Learning →
+      </a>
+      <a href="pages/examples.html" class="btn btn-outline">
+        See JSON Examples
+      </a>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <span class="hero-stat-num">6</span>
+        <span class="hero-stat-label">Learning Modules</span>
+      </div>
+      <div class="hero-stat-div"></div>
+      <div class="hero-stat">
+        <span class="hero-stat-num">20+</span>
+        <span class="hero-stat-label">JSON Examples</span>
+      </div>
+      <div class="hero-stat-div"></div>
+      <div class="hero-stat">
+        <span class="hero-stat-num">0</span>
+        <span class="hero-stat-label">Coding Required</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHAT IS FHIR? QUICK SUMMARY -->
+<section class="section container-wide">
+  <div class="section-eyebrow">✦ Plain English Summary</div>
+  <div class="section-title">So… what actually <em>is</em> FHIR?</div>
+  <p class="section-subtitle">Think of it like a universal language that all healthcare software can speak.</p>
+
+  <div class="analogy-block">
+    <div class="analogy-icon">🔌</div>
+    <div class="analogy-body">
+      <h3>The Power Outlet Analogy</h3>
+      <p>
+        In the US, all power outlets follow the same standard — so any lamp, 
+        phone charger, or appliance can plug into any outlet. 
+        <strong>FHIR is that same idea for healthcare data.</strong> 
+        Any FHIR-compatible app or system can connect to any other FHIR-compatible 
+        system and exchange patient data without custom, expensive integrations.
+      </p>
+    </div>
+  </div>
+
+  <div class="card-grid" style="margin-top:32px">
+    <div class="card">
+      <div class="icon-box teal">🏥</div>
+      <h3 class="card-title">The Problem it Solves</h3>
+      <p class="card-body">Before FHIR, hospital A's software couldn't talk to clinic B's software. Patient records were stuck in silos. FHIR creates a common format so data can flow freely and securely.</p>
+    </div>
+    <div class="card">
+      <div class="icon-box cyan">📋</div>
+      <h3 class="card-title">What it Standardizes</h3>
+      <p class="card-body">FHIR defines exactly how to represent a Patient, a Diagnosis, a Lab Result, a Medication, and dozens of other healthcare concepts — in a format any system can read.</p>
+    </div>
+    <div class="card">
+      <div class="icon-box blue">🌐</div>
+      <h3 class="card-title">How Data Travels</h3>
+      <p class="card-body">FHIR uses the same technology as websites (APIs and JSON) to send data. That's why it's modern, fast, and easy for developers to build on.</p>
+    </div>
+    <div class="card">
+      <div class="icon-box green">✅</div>
+      <h3 class="card-title">Why Analysts Care</h3>
+      <p class="card-body">As a business analyst, you'll write requirements, review specs, and talk to developers. Understanding FHIR means you can have those conversations confidently and accurately.</p>
+    </div>
+  </div>
+</section>
+
+<!-- LEARNING PATH -->
+<section class="section container-wide" style="background: var(--bg-surface);">
+  <div class="section-eyebrow">📚 Learning Path</div>
+  <div class="section-title">Start here. Go in order.</div>
+  <p class="section-subtitle">Each module builds on the last. No prior tech knowledge needed.</p>
+
+  <div class="learning-path">
+
+    <a href="pages/what-is-api.html" class="path-card">
+      <div class="path-num">01</div>
+      <div class="path-icon">🔌</div>
+      <div class="path-info">
+        <h3>What is an API?</h3>
+        <p>The foundation. APIs are how software systems talk to each other. FHIR uses them too. Learn this first.</p>
+        <span class="badge teal">Start Here</span>
+      </div>
+      <div class="path-arrow">→</div>
+    </a>
+
+    <a href="pages/fhir-basics.html" class="path-card">
+      <div class="path-num">02</div>
+      <div class="path-icon">📘</div>
+      <div class="path-info">
+        <h3>FHIR Basics</h3>
+        <p>What FHIR stands for, its history, why it was created, and what problems it solves in healthcare.</p>
+        <span class="badge cyan">Essential</span>
+      </div>
+      <div class="path-arrow">→</div>
+    </a>
+
+    <a href="pages/resources.html" class="path-card">
+      <div class="path-num">03</div>
+      <div class="path-icon">📦</div>
+      <div class="path-info">
+        <h3>FHIR Resources</h3>
+        <p>FHIR organizes all healthcare data into "Resources" — like Patient, Observation, Medication. Learn the key ones.</p>
+        <span class="badge blue">Core Knowledge</span>
+      </div>
+      <div class="path-arrow">→</div>
+    </a>
+
+    <a href="pages/json-intro.html" class="path-card">
+      <div class="path-num">04</div>
+      <div class="path-icon">🗂️</div>
+      <div class="path-info">
+        <h3>Reading JSON</h3>
+        <p>FHIR data is written in JSON format. It looks scary at first, but it's actually very readable. Let's decode it.</p>
+        <span class="badge orange">Practical</span>
+      </div>
+      <div class="path-arrow">→</div>
+    </a>
+
+    <a href="pages/examples.html" class="path-card">
+      <div class="path-num">05</div>
+      <div class="path-icon">💡</div>
+      <div class="path-info">
+        <h3>Real FHIR Examples</h3>
+        <p>See full, annotated JSON examples for Patient, Observation, Condition, Medication, and more.</p>
+        <span class="badge green">Hands-On</span>
+      </div>
+      <div class="path-arrow">→</div>
+    </a>
+
+    <a href="pages/api-practice.html" class="path-card">
+      <div class="path-num">06</div>
+      <div class="path-icon">🧪</div>
+      <div class="path-info">
+        <h3>API Practice</h3>
+        <p>Build real FHIR queries, send them to a live server, and solve hands-on challenges. Free, no sign-up needed.</p>
+        <span class="badge purple">Practice</span>
+      </div>
+      <div class="path-arrow">→</div>
+    </a>
+
+  </div>
+</section>
+
+<!-- WHY THIS MATTERS FOR BAS -->
+<section class="section container-wide">
+  <div class="section-eyebrow">💼 For Business Analysts</div>
+  <div class="section-title">How FHIR knowledge makes you a better BA</div>
+
+  <div class="card-grid-2" style="margin-top:32px">
+    <div class="card">
+      <h3 class="card-title">📝 Write Better Requirements</h3>
+      <p class="card-body">When you understand what data exists in FHIR and how it's structured, you can write more precise user stories and acceptance criteria. No more back-and-forth with developers asking "what data is available?"</p>
+    </div>
+    <div class="card">
+      <h3 class="card-title">🤝 Speak Dev's Language</h3>
+      <p class="card-body">Developers working with EHRs will talk about endpoints, resources, and payloads. Knowing FHIR means you join those conversations as a peer, not a bystander.</p>
+    </div>
+    <div class="card">
+      <h3 class="card-title">🔍 Review API Specs</h3>
+      <p class="card-body">You'll be able to look at a FHIR API spec or a JSON payload and understand what patient data it contains, whether it's complete, and whether it matches the requirements.</p>
+    </div>
+    <div class="card">
+      <h3 class="card-title">📊 Drive Data Mapping</h3>
+      <p class="card-body">FHIR integrations often involve data mapping between systems. You'll be able to guide those conversations and spot gaps — a huge value-add on any healthcare IT project.</p>
+    </div>
+  </div>
+</section>
+
+<!-- QUICK INTRO JSON EXAMPLE -->
+<section class="section container-wide" style="background:var(--bg-surface)">
+  <div class="section-eyebrow">👀 A Sneak Peek</div>
+  <div class="section-title">This is what a Patient looks like in FHIR</div>
+  <p class="section-subtitle">Don't worry — we'll explain every single line. By the end of this course, you'll be able to read this easily.</p>
+
+  <div class="json-viewer-container" id="homeJson">
+    <div class="json-viewer-header">
+      <div class="json-viewer-dots">
+        <span></span><span></span><span></span>
+      </div>
+      <span class="json-viewer-title">Patient Resource — JSON Format</span>
+      <button class="json-copy-btn" onclick="copyJson('homeJsonCode', this)">
+        📋 Copy
+      </button>
+    </div>
+    <div class="json-viewer-body">
+      <pre id="homeJsonCode"></pre>
+    </div>
+  </div>
+
+  <div class="callout tip" style="margin-top:24px">
+    <div class="callout-icon">💡</div>
+    <div class="callout-content">
+      <div class="callout-title">You don't need to memorize this!</div>
+      <div class="callout-body">As a BA, your job is to <em>understand</em> the structure and <em>recognize</em> what data fields mean — not to write the JSON yourself. That's the developer's job.</div>
+    </div>
+  </div>
+
+  <div style="text-align:center; margin-top:36px">
+    <a href="pages/what-is-api.html" class="btn btn-primary" style="font-size:15px; padding:14px 32px">
+      Begin Learning → Start with "What is an API?"
+    </a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <p>FHIR Learn · Built for Healthcare Business Analysts · Based on <a href="https://hl7.org/fhir/" target="_blank">HL7 FHIR R4</a> standard</p>
+</footer>
+
+<script src="js/app.js"></script>
+<script>
+  // Render the home example JSON
+  const homePatient = {
+    "resourceType": "Patient",
+    "id": "patient-001",
+    "name": [
+      {
+        "use": "official",
+        "family": "Johnson",
+        "given": ["Sarah", "Marie"]
+      }
+    ],
+    "gender": "female",
+    "birthDate": "1985-04-23",
+    "address": [
+      {
+        "line": ["123 Oak Street"],
+        "city": "Austin",
+        "state": "TX",
+        "postalCode": "78701"
+      }
+    ],
+    "telecom": [
+      {
+        "system": "phone",
+        "value": "512-555-0198",
+        "use": "home"
+      }
+    ]
+  };
+  document.getElementById('homeJsonCode').innerHTML = syntaxHighlight(JSON.stringify(homePatient, null, 2));
+</script>
+</body>
+</html>

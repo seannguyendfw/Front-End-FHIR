@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FHIR Resources — FHIR Learn</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="../styles/main.css"/>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-logo">
+      <div class="nav-logo-icon">🏥</div>
+      <span class="nav-logo-text">FHIR Learn</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="../index.html">🏠 Home</a></li>
+      <li><a href="what-is-api.html">🔌 What is an API?</a></li>
+      <li><a href="fhir-basics.html">📘 FHIR Basics</a></li>
+      <li><a href="resources.html" class="active">📦 Resources</a></li>
+      <li><a href="examples.html">💡 Examples <span class="nav-badge">JSON</span></a></li>
+      <li><a href="api-practice.html">🧪 API Practice</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="breadcrumb container-wide">
+  <a href="../index.html">Home</a>
+  <span class="breadcrumb-sep">›</span>
+  <span>FHIR Resources</span>
+</div>
+
+<div class="page-hero">
+  <div class="page-hero-eyebrow">📖 Module 3 of 6</div>
+  <h1>FHIR <span>Resources</span></h1>
+  <p>FHIR organizes all healthcare data into building blocks called "Resources." Learn the most important ones and what data they contain.</p>
+</div>
+
+<div class="container-wide">
+
+  <!-- What is a resource -->
+  <section class="section">
+    <div class="section-eyebrow">📦 The Concept</div>
+    <div class="section-title">What exactly is a "Resource"?</div>
+
+    <div class="callout analogy">
+      <div class="callout-icon">📁</div>
+      <div class="callout-content">
+        <div class="callout-title">Think of it like file folders in a filing cabinet</div>
+        <div class="callout-body">
+          Imagine a hospital's paper records room. There are different types of folders:
+          one for patient demographics, one for lab results, one for prescriptions, one for visit notes. 
+          Each folder type has a consistent layout — the same fields, in the same order, every time.<br/><br/>
+          <strong>FHIR Resources are those standardized folders.</strong> A "Patient" resource always contains the same types of fields (name, birthdate, gender, address). 
+          A "Observation" resource always contains measurement data (like a blood pressure reading). 
+          Consistent. Predictable. Interoperable.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Key resources -->
+  <section class="section">
+    <div class="section-eyebrow">🔑 The Essential Resources</div>
+    <div class="section-title">The FHIR resources you'll encounter most</div>
+    <p class="section-subtitle">There are ~150 FHIR resources total, but as a BA you'll primarily work with these core ones.</p>
+
+    <!-- Resource cards -->
+    <div style="display:flex;flex-direction:column;gap:20px;margin-top:28px">
+
+      <!-- Patient -->
+      <div class="card" style="border-color:rgba(20,184,166,0.3)">
+        <div style="display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap">
+          <div style="min-width:200px">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+              <span style="font-size:28px">👤</span>
+              <div>
+                <h3 style="font-size:18px;font-weight:700;color:var(--text-primary)">Patient</h3>
+                <span class="badge teal">Demographics</span>
+              </div>
+            </div>
+            <p style="font-size:13px;color:var(--text-secondary);line-height:1.6">Who the patient is — their identity, demographics, and contact information.</p>
+          </div>
+          <div style="flex:1;min-width:260px">
+            <p style="font-size:13px;font-weight:600;color:var(--text-muted);margin-bottom:8px">KEY FIELDS:</p>
+            <div style="display:flex;flex-wrap:wrap;gap:6px">
+              <span class="badge teal">name</span>
+              <span class="badge teal">birthDate</span>
+              <span class="badge teal">gender</span>
+              <span class="badge teal">address</span>
+              <span class="badge teal">telecom (phone/email)</span>
+              <span class="badge teal">identifier (MRN)</span>
+              <span class="badge teal">maritalStatus</span>
+              <span class="badge teal">language</span>
+            </div>
+            <div class="callout tip" style="margin-top:12px">
+              <div class="callout-icon">💡</div>
+              <div class="callout-content">
+                <div class="callout-body"><strong>BA Tip:</strong> The Patient resource does NOT contain clinical data. A patient's diagnoses, meds, and lab results are in separate resources that link back to the Patient by ID.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Observation -->
+      <div class="card" style="border-color:rgba(6,182,212,0.3)">
+        <div style="display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap">
+          <div style="min-width:200px">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+              <span style="font-size:28px">🔬</span>
+              <div>
+                <h3 style="font-size:18px;font-weight:700;color:var(--text-primary)">Observation</h3>
+                <span class="badge cyan">Measurements & Labs</span>
+              </div>
+            </div>
+            <p style="font-size:13px;color:var(--text-secondary);line-height:1.6">Measurements, lab results, vital signs — anything that was measured or observed about the patient.</p>
+          </div>
+          <div style="flex:1;min-width:260px">
+            <p style="font-size:13px;font-weight:600;color:var(--text-muted);margin-bottom:8px">EXAMPLES:</p>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px">
+              <span class="badge cyan">Blood pressure: 120/80</span>
+              <span class="badge cyan">Heart rate: 72 bpm</span>
+              <span class="badge cyan">HbA1c: 6.2%</span>
+              <span class="badge cyan">BMI: 24.5</span>
+              <span class="badge cyan">Blood glucose: 95 mg/dL</span>
+            </div>
+            <p style="font-size:13px;font-weight:600;color:var(--text-muted);margin-bottom:8px">KEY FIELDS:</p>
+            <div style="display:flex;flex-wrap:wrap;gap:6px">
+              <span class="badge blue">code (what was measured)</span>
+              <span class="badge blue">value (the result)</span>
+              <span class="badge blue">unit (mg/dL, bpm, etc.)</span>
+              <span class="badge blue">status</span>
+              <span class="badge blue">effectiveDateTime</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Condition -->
+      <div class="card" style="border-color:rgba(59,130,246,0.3)">
+        <div style="display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap">
+          <div style="min-width:200px">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+              <span style="font-size:28px">🩺</span>
+              <div>
+                <h3 style="font-size:18px;font-weight:700;color:var(--text-primary)">Condition</h3>
+                <span class="badge blue">Diagnoses & Problems</span>
+              </div>
+            </div>
+            <p style="font-size:13px;color:var(--text-secondary);line-height:1.6">A patient's diagnoses, medical problems, or health conditions — both current and historical.</p>
+          </div>
+          <div style="flex:1;min-width:260px">
+            <p style="font-size:13px;font-weight:600;color:var(--text-muted);margin-bottom:8px">EXAMPLES:</p>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px">
+              <span class="badge blue">Type 2 Diabetes (E11)</span>
+              <span class="badge blue">Hypertension (I10)</span>
+              <span class="badge blue">Asthma (J45)</span>
+            </div>
+            <div class="callout info" style="margin-top:8px">
+              <div class="callout-icon">ℹ️</div>
+              <div class="callout-content">
+                <div class="callout-body">Conditions use standardized code systems like <strong>ICD-10</strong> (diagnosis codes) and <strong>SNOMED CT</strong> to identify the condition in a machine-readable way.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MedicationRequest -->
+      <div class="card" style="border-color:rgba(245,158,11,0.3)">
+        <div style="display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap">
+          <div style="min-width:200px">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+              <span style="font-size:28px">💊</span>
+              <div>
+                <h3 style="font-size:18px;font-weight:700;color:var(--text-primary)">MedicationRequest</h3>
+                <span class="badge orange">Prescriptions</span>
+              </div>
+            </div>
+            <p style="font-size:13px;color:var(--text-secondary);line-height:1.6">A prescription or order for medication — what drug, what dose, how often, for how long.</p>
+          </div>
+          <div style="flex:1;min-width:260px">
+            <p style="font-size:13px;font-weight:600;color:var(--text-muted);margin-bottom:8px">KEY FIELDS:</p>
+            <div style="display:flex;flex-wrap:wrap;gap:6px">
+              <span class="badge orange">medication (drug name + RxNorm code)</span>
+              <span class="badge orange">dosage (50mg)</span>
+              <span class="badge orange">frequency (twice daily)</span>
+              <span class="badge orange">requester (prescribing doctor)</span>
+              <span class="badge orange">status (active/stopped)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Encounter -->
+      <div class="card" style="border-color:rgba(139,92,246,0.3)">
+        <div style="display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap">
+          <div style="min-width:200px">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+              <span style="font-size:28px">🏥</span>
+              <div>
+                <h3 style="font-size:18px;font-weight:700;color:var(--text-primary)">Encounter</h3>
+                <span class="badge purple">Visits & Interactions</span>
+              </div>
+            </div>
+            <p style="font-size:13px;color:var(--text-secondary);line-height:1.6">A patient's visit or interaction with the healthcare system — office visit, ER visit, telehealth, inpatient stay.</p>
+          </div>
+          <div style="flex:1;min-width:260px">
+            <p style="font-size:13px;font-weight:600;color:var(--text-muted);margin-bottom:8px">KEY FIELDS:</p>
+            <div style="display:flex;flex-wrap:wrap;gap:6px">
+              <span class="badge purple">class (inpatient/outpatient/emergency)</span>
+              <span class="badge purple">status</span>
+              <span class="badge purple">period (start/end dates)</span>
+              <span class="badge purple">participant (care team)</span>
+              <span class="badge purple">reasonCode</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Practitioner -->
+      <div class="card" style="border-color:rgba(16,185,129,0.3)">
+        <div style="display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap">
+          <div style="min-width:200px">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+              <span style="font-size:28px">👨‍⚕️</span>
+              <div>
+                <h3 style="font-size:18px;font-weight:700;color:var(--text-primary)">Practitioner</h3>
+                <span class="badge green">Providers</span>
+              </div>
+            </div>
+            <p style="font-size:13px;color:var(--text-secondary);line-height:1.6">A healthcare provider — doctor, nurse, therapist, pharmacist. Contains their credentials and contact info.</p>
+          </div>
+          <div style="flex:1;min-width:260px">
+            <p style="font-size:13px;font-weight:600;color:var(--text-muted);margin-bottom:8px">KEY FIELDS:</p>
+            <div style="display:flex;flex-wrap:wrap;gap:6px">
+              <span class="badge green">name</span>
+              <span class="badge green">NPI (National Provider ID)</span>
+              <span class="badge green">qualification (MD, NP, etc.)</span>
+              <span class="badge green">specialty</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- How resources link together -->
+  <section class="section">
+    <div class="section-eyebrow">🔗 How They Connect</div>
+    <div class="section-title">Resources reference each other</div>
+    <p class="section-subtitle">Resources don't exist in isolation — they link together to tell the full patient story.</p>
+
+    <div class="callout analogy">
+      <div class="callout-icon">🕸️</div>
+      <div class="callout-content">
+        <div class="callout-title">References are like hyperlinks between records</div>
+        <div class="callout-body">
+          A MedicationRequest says "prescribed for Patient/123" — that's a <strong>reference</strong> to the Patient resource.<br/>
+          An Observation says "result for Patient/123 during Encounter/456" — it references both Patient and Encounter.<br/><br/>
+          This creates a connected web of data, where you can start from any resource and follow the links to get the full picture.
+        </div>
+      </div>
+    </div>
+
+    <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px;margin-top:24px">
+      <h4 style="font-size:15px;font-weight:700;color:var(--teal-light);margin-bottom:16px">📋 Example: Patient Sarah's Complete Record</h4>
+      <div style="display:flex;flex-wrap:wrap;gap:12px;font-size:13px">
+        <div style="background:var(--bg-surface);border:1px solid rgba(20,184,166,0.3);padding:12px 16px;border-radius:10px">
+          <div style="font-size:18px;margin-bottom:4px">👤</div>
+          <strong style="color:var(--teal-light)">Patient/sarah-001</strong>
+          <div style="color:var(--text-muted);margin-top:4px">Sarah Johnson, F, DOB 1985</div>
+        </div>
+        <div style="display:flex;align-items:center;color:var(--teal);font-size:20px">→</div>
+        <div style="background:var(--bg-surface);border:1px solid rgba(59,130,246,0.3);padding:12px 16px;border-radius:10px">
+          <div style="font-size:18px;margin-bottom:4px">🩺</div>
+          <strong style="color:#93c5fd">Condition/cond-001</strong>
+          <div style="color:var(--text-muted);margin-top:4px">subject: Patient/sarah-001<br/>Type 2 Diabetes</div>
+        </div>
+        <div style="display:flex;align-items:center;color:var(--teal);font-size:20px">→</div>
+        <div style="background:var(--bg-surface);border:1px solid rgba(245,158,11,0.3);padding:12px 16px;border-radius:10px">
+          <div style="font-size:18px;margin-bottom:4px">💊</div>
+          <strong style="color:#fcd34d">MedicationRequest/rx-001</strong>
+          <div style="color:var(--text-muted);margin-top:4px">subject: Patient/sarah-001<br/>Metformin 500mg</div>
+        </div>
+        <div style="display:flex;align-items:center;color:var(--teal);font-size:20px">→</div>
+        <div style="background:var(--bg-surface);border:1px solid rgba(6,182,212,0.3);padding:12px 16px;border-radius:10px">
+          <div style="font-size:18px;margin-bottom:4px">🔬</div>
+          <strong style="color:#67e8f9">Observation/obs-001</strong>
+          <div style="color:var(--text-muted);margin-top:4px">subject: Patient/sarah-001<br/>HbA1c: 6.8%</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Navigation -->
+  <section class="section" style="border-top:1px solid var(--border)">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px">
+      <a href="fhir-basics.html" class="btn btn-outline">← FHIR Basics</a>
+      <div>
+        <p style="font-size:13px;color:var(--text-muted);margin-bottom:8px;text-align:right">Next Module →</p>
+        <a href="json-intro.html" class="btn btn-primary">🗂️ Reading JSON →</a>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer class="footer">
+  <p>FHIR Learn · Module 3 of 6 · <a href="../index.html">Back to home</a></p>
+</footer>
+
+<script src="../js/app.js"></script>
+</body>
+</html>

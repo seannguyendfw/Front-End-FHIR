@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FHIR Basics — FHIR Learn</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="../styles/main.css"/>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-logo">
+      <div class="nav-logo-icon">🏥</div>
+      <span class="nav-logo-text">FHIR Learn</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="../index.html">🏠 Home</a></li>
+      <li><a href="what-is-api.html">🔌 What is an API?</a></li>
+      <li><a href="fhir-basics.html" class="active">📘 FHIR Basics</a></li>
+      <li><a href="resources.html">📦 Resources</a></li>
+      <li><a href="examples.html">💡 Examples <span class="nav-badge">JSON</span></a></li>
+      <li><a href="api-practice.html">🧪 API Practice</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="breadcrumb container-wide">
+  <a href="../index.html">Home</a>
+  <span class="breadcrumb-sep">›</span>
+  <span>FHIR Basics</span>
+</div>
+
+<div class="page-hero">
+  <div class="page-hero-eyebrow">📖 Module 2 of 6</div>
+  <h1>FHIR <span>Basics</span></h1>
+  <p>What is HL7 FHIR, why was it created, and why does it matter for you as a healthcare business analyst?</p>
+</div>
+
+<div class="container-wide">
+
+  <!-- What is FHIR -->
+  <section class="section">
+    <div class="section-eyebrow">🔤 Breaking it Down</div>
+    <div class="section-title">What does "HL7 FHIR" actually stand for?</div>
+
+    <div class="card-grid" style="margin-top:28px">
+      <div class="card" style="border-color:rgba(20,184,166,0.3)">
+        <div style="font-size:28px;margin-bottom:12px;">🏛️</div>
+        <h3 class="card-title">HL7</h3>
+        <p class="card-body"><strong>Health Level Seven International</strong> — a non-profit organization founded in 1987 that creates standards for sharing healthcare data. Think of them as the "rules committee" for healthcare IT.</p>
+        <p class="card-body" style="margin-top:8px;font-size:13px;color:var(--text-muted)">The "Seven" refers to the 7th layer (Application Layer) of the ISO network model — the layer where healthcare applications operate.</p>
+      </div>
+      <div class="card" style="border-color:rgba(6,182,212,0.3)">
+        <div style="font-size:28px;margin-bottom:12px;">⚡</div>
+        <h3 class="card-title">FHIR</h3>
+        <p class="card-body"><strong>Fast Healthcare Interoperability Resources</strong> — HL7's modern standard for exchanging healthcare information. Released in 2014, it's now the required standard for US healthcare APIs.</p>
+        <ul style="margin-top:12px;font-size:14px;color:var(--text-secondary);line-height:2;list-style:none">
+          <li>⚡ <strong>Fast</strong> — Quick to implement compared to older standards</li>
+          <li>🏥 <strong>Healthcare</strong> — Designed specifically for medical data</li>
+          <li>🔄 <strong>Interoperability</strong> — Systems can work together</li>
+          <li>📦 <strong>Resources</strong> — Data is organized into "resources" (like Patient, Lab Result)</li>
+        </ul>
+      </div>
+      <div class="card" style="border-color:rgba(139,92,246,0.3)">
+        <div style="font-size:28px;margin-bottom:12px;">⚖️</div>
+        <h3 class="card-title">R4 (the version)</h3>
+        <p class="card-body">FHIR has versions: DSTU2, STU3, R4, and R4B. <strong>R4 is the current stable standard</strong> used by most US EHRs (Epic, Cerner, etc.) and required by CMS regulations since 2021.</p>
+        <div class="callout tip" style="margin-top:12px">
+          <div class="callout-icon">✅</div>
+          <div class="callout-content">
+            <div class="callout-body">When someone says "FHIR" in a project context today, assume they mean FHIR R4 unless specified otherwise.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why was it created -->
+  <section class="section">
+    <div class="section-eyebrow">🕰️ The Problem Before FHIR</div>
+    <div class="section-title">Healthcare data was stuck in silos</div>
+    <p class="section-subtitle">To understand why FHIR matters, you have to understand the chaos it replaced.</p>
+
+    <div class="callout warning">
+      <div class="callout-icon">⚠️</div>
+      <div class="callout-content">
+        <div class="callout-title">Before FHIR: The Old Reality</div>
+        <div class="callout-body">
+          • Hospital A uses Epic. Clinic B uses Cerner. Neither could easily share patient data.<br/>
+          • A patient's records from 5 different providers were in 5 different, incompatible systems.<br/>
+          • Every new integration required expensive, custom-built connections between systems.<br/>
+          • Patients had to fill out the same forms repeatedly because records couldn't travel with them.
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:28px;display:flex;gap:24px;flex-wrap:wrap">
+      <div style="flex:1;min-width:280px">
+        <h3 style="font-size:16px;font-weight:700;color:#fca5a5;margin-bottom:12px">❌ Before FHIR</h3>
+        <div class="step-list">
+          <div class="step-item">
+            <div class="step-num" style="background:#ef4444">!</div>
+            <div class="step-body">
+              <h4>HL7 v2 — Inconsistent</h4>
+              <p>The old standard allowed too many variations. Two hospitals using "HL7 v2" still needed custom code to talk to each other.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num" style="background:#ef4444">!</div>
+            <div class="step-body">
+              <h4>CCD/CDA — Hard to use</h4>
+              <p>The XML-based format that came before FHIR was clunky, verbose, and difficult for modern apps to consume.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num" style="background:#ef4444">!</div>
+            <div class="step-body">
+              <h4>Expensive integrations</h4>
+              <p>Hospital IT teams spent millions building point-to-point connections. Every new system meant a new custom integration project.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="flex:1;min-width:280px">
+        <h3 style="font-size:16px;font-weight:700;color:#6ee7b7;margin-bottom:12px">✅ After FHIR</h3>
+        <div class="step-list">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <h4>One universal format</h4>
+              <p>Patient data looks the same no matter which EHR it comes from. A Patient is always a Patient, with the same fields in the same structure.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <h4>Modern web technology</h4>
+              <p>FHIR uses REST APIs and JSON — the same tech that powers Google, Amazon, and every modern web app. Developers already know how to use it.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              <h4>Mandated by law (US)</h4>
+              <p>The 21st Century Cures Act requires all EHRs to expose FHIR APIs. This means the data is now available by law, not just by luck.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Key principles -->
+  <section class="section">
+    <div class="section-eyebrow">🏗️ How FHIR is Built</div>
+    <div class="section-title">Three things that make FHIR work</div>
+
+    <div class="card-grid" style="margin-top:28px">
+      <div class="card">
+        <div class="icon-box teal">📦</div>
+        <h3 class="card-title">1. Resources</h3>
+        <p class="card-body">FHIR breaks healthcare data into "Resources" — like building blocks. Each resource covers one concept: Patient, Appointment, Medication, Lab Result (Observation), Diagnosis (Condition), etc.</p>
+        <p class="card-body" style="margin-top:8px"><strong style="color:var(--teal-light)">~150 resource types exist</strong>, covering nearly every aspect of healthcare.</p>
+      </div>
+      <div class="card">
+        <div class="icon-box cyan">🌐</div>
+        <h3 class="card-title">2. REST API</h3>
+        <p class="card-body">FHIR uses a RESTful API model — meaning you use simple HTTP requests (GET, POST, PUT, DELETE) with standard web URLs to access data. No proprietary protocols needed.</p>
+        <code style="display:block;background:var(--bg-surface);padding:10px;border-radius:6px;font-size:12px;color:var(--teal-light);margin-top:8px;font-family:'JetBrains Mono',monospace">GET https://ehr.hospital.com/fhir/Patient/123</code>
+      </div>
+      <div class="card">
+        <div class="icon-box blue">📄</div>
+        <h3 class="card-title">3. JSON Format</h3>
+        <p class="card-body">FHIR data is represented in JSON — a lightweight, human-readable format. We'll do a full JSON deep-dive in Module 4, but it's essentially structured like a well-organized list of key-value pairs.</p>
+        <code style="display:block;background:var(--bg-surface);padding:10px;border-radius:6px;font-size:12px;color:var(--teal-light);margin-top:8px;font-family:'JetBrains Mono',monospace">"gender": "female"</code>
+      </div>
+    </div>
+  </section>
+
+  <!-- FHIR in the real world -->
+  <section class="section">
+    <div class="section-eyebrow">🌍 Real World</div>
+    <div class="section-title">Where you'll see FHIR in your projects</div>
+
+    <div class="card-grid-2" style="margin-top:28px">
+      <div class="card">
+        <h3 class="card-title">🏥 EHR Integrations</h3>
+        <p class="card-body">Epic, Cerner, Oracle Health, and all major EHRs now expose FHIR APIs. When your project needs to pull patient data from an EHR, FHIR is the API standard you'll use.</p>
+      </div>
+      <div class="card">
+        <h3 class="card-title">📱 Patient-Facing Apps</h3>
+        <p class="card-body">Apple Health, CommonHealth, and patient portal apps use FHIR's SMART on FHIR standard to let patients access their own records from any provider.</p>
+      </div>
+      <div class="card">
+        <h3 class="card-title">🔬 Care Gap & Analytics</h3>
+        <p class="card-body">Population health and care gap analysis tools pull FHIR data from EHRs to identify patients who need preventive care, follow-ups, or chronic disease management.</p>
+      </div>
+      <div class="card">
+        <h3 class="card-title">💊 Medication Management</h3>
+        <p class="card-body">Pharmacy systems, prescription monitoring programs, and medication reconciliation tools use FHIR's Medication and MedicationRequest resources.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Navigation -->
+  <section class="section" style="border-top:1px solid var(--border)">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px">
+      <a href="what-is-api.html" class="btn btn-outline">← What is an API?</a>
+      <div>
+        <p style="font-size:13px;color:var(--text-muted);margin-bottom:8px;text-align:right">Next Module →</p>
+        <a href="resources.html" class="btn btn-primary">📦 FHIR Resources →</a>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer class="footer">
+  <p>FHIR Learn · Module 2 of 6 · <a href="../index.html">Back to home</a></p>
+</footer>
+
+<script src="../js/app.js"></script>
+</body>
+</html>

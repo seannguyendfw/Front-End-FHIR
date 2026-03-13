@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Reading JSON — FHIR Learn</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="../styles/main.css"/>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-logo">
+      <div class="nav-logo-icon">🏥</div>
+      <span class="nav-logo-text">FHIR Learn</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="../index.html">🏠 Home</a></li>
+      <li><a href="what-is-api.html">🔌 What is an API?</a></li>
+      <li><a href="fhir-basics.html">📘 FHIR Basics</a></li>
+      <li><a href="resources.html">📦 Resources</a></li>
+      <li><a href="examples.html">💡 Examples <span class="nav-badge">JSON</span></a></li>
+      <li><a href="api-practice.html">🧪 API Practice</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="breadcrumb container-wide">
+  <a href="../index.html">Home</a>
+  <span class="breadcrumb-sep">›</span>
+  <span>Reading JSON</span>
+</div>
+
+<div class="page-hero">
+  <div class="page-hero-eyebrow">📖 Module 4 of 6</div>
+  <h1>Reading <span>JSON</span></h1>
+  <p>FHIR sends and receives data in JSON format. It might look intimidating at first — but it's actually very logical and readable once you know the rules.</p>
+</div>
+
+<div class="container-wide">
+
+  <section class="section">
+    <div class="section-eyebrow">🤔 First Things First</div>
+    <div class="section-title">What is JSON?</div>
+
+    <div class="callout analogy">
+      <div class="callout-icon">📋</div>
+      <div class="callout-content">
+        <div class="callout-title">JSON is like a super-structured form</div>
+        <div class="callout-body">
+          Think of a paper intake form at a doctor's office. It has labeled fields: "First Name:", "Date of Birth:", "Insurance Provider:". Each field has a label and a value.<br/><br/>
+          <strong>JSON is exactly that — but for computers.</strong> It has "keys" (the labels) and "values" (the filled-in answers), structured in a way that any software system in the world can read.
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:32px;display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start">
+      <div style="flex:1;min-width:260px">
+        <h3 style="font-size:15px;font-weight:700;color:var(--text-primary);margin-bottom:12px">📋 Paper Form</h3>
+        <div style="background:white;border-radius:12px;padding:20px;font-size:14px;color:#333;line-height:2">
+          <div><strong>First Name:</strong> Sarah</div>
+          <div><strong>Last Name:</strong> Johnson</div>
+          <div><strong>Date of Birth:</strong> 04/23/1985</div>
+          <div><strong>Gender:</strong> Female</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;font-size:28px;color:var(--teal);padding:0 8px">→</div>
+      <div style="flex:1;min-width:280px">
+        <h3 style="font-size:15px;font-weight:700;color:var(--text-primary);margin-bottom:12px">💻 Same Data in JSON</h3>
+        <div class="json-viewer-container">
+          <div class="json-viewer-header">
+            <div class="json-viewer-dots"><span></span><span></span><span></span></div>
+            <span class="json-viewer-title">patient-form.json</span>
+            <button class="json-copy-btn" onclick="copyJson('jsonIntro1', this)">📋 Copy</button>
+          </div>
+          <div class="json-viewer-body">
+            <pre id="jsonIntro1"></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- JSON Rules -->
+  <section class="section">
+    <div class="section-eyebrow">📐 The Rules</div>
+    <div class="section-title">JSON has just 4 simple rules</div>
+
+    <div class="card-grid" style="margin-top:28px">
+      <div class="card">
+        <div style="font-size:28px;margin-bottom:12px">1️⃣</div>
+        <h3 class="card-title">Keys are always in quotes</h3>
+        <p class="card-body">Every label (key) is wrapped in double quotes. This tells JSON "this is a field name, not a value."</p>
+        <code style="display:block;background:var(--bg-surface);padding:10px;border-radius:6px;font-size:13px;margin-top:12px;font-family:'JetBrains Mono',monospace">
+          <span style="color:#7dd3fc">"gender"</span>: <span style="color:#86efac">"female"</span>
+        </code>
+      </div>
+      <div class="card">
+        <div style="font-size:28px;margin-bottom:12px">2️⃣</div>
+        <h3 class="card-title">Curly braces = one object</h3>
+        <p class="card-body"><code style="color:var(--teal-light)">{}</code> braces wrap a single record or object. Everything inside is the data for that one thing (one patient, one lab result, etc.)</p>
+        <code style="display:block;background:var(--bg-surface);padding:10px;border-radius:6px;font-size:13px;margin-top:12px;font-family:'JetBrains Mono',monospace">
+          <span style="color:#94a3b8">{</span><br/>
+          &nbsp;&nbsp;<span style="color:#7dd3fc">"name"</span>: <span style="color:#86efac">"Sarah"</span><br/>
+          <span style="color:#94a3b8">}</span>
+        </code>
+      </div>
+      <div class="card">
+        <div style="font-size:28px;margin-bottom:12px">3️⃣</div>
+        <h3 class="card-title">Square brackets = a list</h3>
+        <p class="card-body"><code style="color:var(--teal-light)">[]</code> brackets hold a list of multiple things. Patients can have multiple phone numbers, names, or addresses — those go in a list.</p>
+        <code style="display:block;background:var(--bg-surface);padding:10px;border-radius:6px;font-size:13px;margin-top:12px;font-family:'JetBrains Mono',monospace">
+          <span style="color:#7dd3fc">"given"</span>: <span style="color:#94a3b8">[</span><span style="color:#86efac">"Sarah"</span>, <span style="color:#86efac">"Marie"</span><span style="color:#94a3b8">]</span>
+        </code>
+      </div>
+      <div class="card">
+        <div style="font-size:28px;margin-bottom:12px">4️⃣</div>
+        <h3 class="card-title">Commas separate fields</h3>
+        <p class="card-body">Every key-value pair (except the last one in a block) is followed by a comma. This is just punctuation that separates one field from the next.</p>
+        <code style="display:block;background:var(--bg-surface);padding:10px;border-radius:6px;font-size:13px;margin-top:12px;font-family:'JetBrains Mono',monospace">
+          <span style="color:#7dd3fc">"gender"</span>: <span style="color:#86efac">"female"</span>,<br/>
+          <span style="color:#7dd3fc">"birthDate"</span>: <span style="color:#86efac">"1985-04-23"</span>
+        </code>
+      </div>
+    </div>
+  </section>
+
+  <!-- Annotated example -->
+  <section class="section">
+    <div class="section-eyebrow">🔍 Line by Line</div>
+    <div class="section-title">Let's decode a FHIR Patient together</div>
+    <p class="section-subtitle">Here is a real FHIR Patient resource, annotated with plain English explanations for every section.</p>
+
+    <div style="display:flex;gap:24px;flex-wrap:wrap;margin-top:28px">
+      <div style="flex:1;min-width:320px">
+        <div class="json-viewer-container">
+          <div class="json-viewer-header">
+            <div class="json-viewer-dots"><span></span><span></span><span></span></div>
+            <span class="json-viewer-title">Patient Resource</span>
+            <button class="json-copy-btn" onclick="copyJson('annotatedJson', this)">📋 Copy</button>
+          </div>
+          <div class="json-viewer-body">
+            <pre id="annotatedJson"></pre>
+          </div>
+        </div>
+      </div>
+      <div style="flex:1;min-width:280px;display:flex;flex-direction:column;gap:12px">
+        <div class="callout tip">
+          <div class="callout-icon">📌</div>
+          <div class="callout-content">
+            <div class="callout-title">"resourceType": "Patient"</div>
+            <div class="callout-body">Every FHIR resource starts by declaring what type it is. This tells the receiving system "I am a Patient record, use the Patient rules to read me."</div>
+          </div>
+        </div>
+        <div class="callout info">
+          <div class="callout-icon">📌</div>
+          <div class="callout-content">
+            <div class="callout-title">"id": "patient-sarah-001"</div>
+            <div class="callout-body">A unique identifier for this specific record in the system. Other resources (like Observations) use this ID to say "this data belongs to patient-sarah-001."</div>
+          </div>
+        </div>
+        <div class="callout analogy">
+          <div class="callout-icon">📌</div>
+          <div class="callout-content">
+            <div class="callout-title">"name": [ { ... } ]</div>
+            <div class="callout-body">Name is a list (note the square brackets) because a patient can have multiple names (legal name, preferred name, maiden name). Each name is an object with "family" (last name) and "given" (first + middle names).</div>
+          </div>
+        </div>
+        <div class="callout warning">
+          <div class="callout-icon">📌</div>
+          <div class="callout-content">
+            <div class="callout-title">"identifier": [ ... ]</div>
+            <div class="callout-body">The patient's MRN (Medical Record Number) or other IDs. This is how real systems identify the patient — not just by name, which isn't unique. MRNs come with a "system" URL that says which organization assigned this ID.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Navigation -->
+  <section class="section" style="border-top:1px solid var(--border)">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px">
+      <a href="resources.html" class="btn btn-outline">← FHIR Resources</a>
+      <div>
+        <p style="font-size:13px;color:var(--text-muted);margin-bottom:8px;text-align:right">Next Module →</p>
+        <a href="examples.html" class="btn btn-primary">💡 Real FHIR Examples →</a>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer class="footer">
+  <p>FHIR Learn · Module 4 of 6 · <a href="../index.html">Back to home</a></p>
+</footer>
+
+<script src="../js/app.js"></script>
+<script>
+  const form = { "firstName": "Sarah", "lastName": "Johnson", "dateOfBirth": "1985-04-23", "gender": "female" };
+  document.getElementById('jsonIntro1').innerHTML = syntaxHighlight(JSON.stringify(form, null, 2));
+
+  const annotated = {
+    "resourceType": "Patient",
+    "id": "patient-sarah-001",
+    "identifier": [
+      {
+        "system": "http://hospital.org/mrn",
+        "value": "MRN-789456"
+      }
+    ],
+    "name": [
+      {
+        "use": "official",
+        "family": "Johnson",
+        "given": ["Sarah", "Marie"]
+      }
+    ],
+    "gender": "female",
+    "birthDate": "1985-04-23",
+    "active": true,
+    "telecom": [
+      { "system": "phone", "value": "512-555-0198", "use": "home" },
+      { "system": "email", "value": "sarah.johnson@email.com" }
+    ],
+    "address": [
+      {
+        "use": "home",
+        "line": ["123 Oak Street"],
+        "city": "Austin",
+        "state": "TX",
+        "postalCode": "78701",
+        "country": "US"
+      }
+    ]
+  };
+  document.getElementById('annotatedJson').innerHTML = syntaxHighlight(JSON.stringify(annotated, null, 2));
+</script>
+</body>
+</html>

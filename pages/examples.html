@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FHIR JSON Examples — FHIR Learn</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="../styles/main.css"/>
+  <style>
+    .example-layout { display:grid; grid-template-columns:220px 1fr; gap:24px; align-items:flex-start; }
+    .example-nav { position:sticky; top:80px; }
+    .example-nav-list { display:flex; flex-direction:column; gap:4px; }
+    .example-nav-btn { display:flex;align-items:center;gap:8px;padding:10px 13px;border-radius:var(--radius-sm);background:none;border:1px solid transparent;color:var(--text-secondary);font-size:13px;font-weight:500;cursor:pointer;text-align:left;width:100%;font-family:inherit;transition:all var(--ease); }
+    .example-nav-btn:hover { background:var(--bg-card);color:var(--text-primary); }
+    .example-nav-btn.active { background:rgba(20,184,166,0.1);border-color:rgba(20,184,166,0.25);color:var(--teal-light); }
+    .example-panel { display:none; }
+    .example-panel.active { display:block; }
+    @media(max-width:768px){.example-layout{grid-template-columns:1fr;}.example-nav{position:relative;top:0;}.example-nav-list{flex-direction:row;flex-wrap:wrap;}}
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-logo">
+      <div class="nav-logo-icon">🏥</div>
+      <span class="nav-logo-text">FHIR Learn</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="../index.html">🏠 Home</a></li>
+      <li><a href="what-is-api.html">🔌 What is an API?</a></li>
+      <li><a href="fhir-basics.html">📘 FHIR Basics</a></li>
+      <li><a href="resources.html">📦 Resources</a></li>
+      <li><a href="examples.html" class="active">💡 Examples <span class="nav-badge">JSON</span></a></li>
+      <li><a href="api-practice.html">🧪 API Practice</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="breadcrumb container-wide">
+  <a href="../index.html">Home</a>
+  <span class="breadcrumb-sep">›</span>
+  <span>JSON Examples</span>
+</div>
+
+<div class="page-hero">
+  <div class="page-hero-eyebrow">📖 Module 5 of 6</div>
+  <h1>Real <span>FHIR JSON</span> Examples</h1>
+  <p>Click any <span style="color:var(--teal-light);text-decoration:underline dotted">underlined field</span> in the JSON to get a plain-English explanation. Data is fetched live from a real FHIR server.</p>
+</div>
+
+<div class="container-wide section">
+
+  <!-- HOW TO USE callout -->
+  <div class="callout tip" style="margin-bottom:28px">
+    <div class="callout-icon">👆</div>
+    <div class="callout-content">
+      <div class="callout-title">How to use this page</div>
+      <div class="callout-body">Select a resource on the left → the JSON loads from a <strong>live FHIR server</strong>. Click any <strong>underlined field name</strong> to instantly see what it means in plain English. Use "Load New" to fetch a different real record.</div>
+    </div>
+  </div>
+
+  <div class="example-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="example-nav">
+      <p style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Select a Resource</p>
+      <div class="example-nav-list">
+        <button class="example-nav-btn active" onclick="loadPanel('patient',this)">👤 Patient</button>
+        <button class="example-nav-btn" onclick="loadPanel('observation',this)">🔬 Observation</button>
+        <button class="example-nav-btn" onclick="loadPanel('condition',this)">🩺 Condition</button>
+        <button class="example-nav-btn" onclick="loadPanel('medication',this)">💊 MedicationRequest</button>
+        <button class="example-nav-btn" onclick="loadPanel('encounter',this)">🏥 Encounter</button>
+      </div>
+
+      <div class="callout info" style="margin-top:20px">
+        <div class="callout-icon">🌐</div>
+        <div class="callout-content">
+          <div class="callout-title">Live FHIR Server</div>
+          <div class="callout-body" style="font-size:12px">Data comes from the public <strong>HAPI FHIR R4</strong> test server at <code style="color:var(--teal-light)">hapi.fhir.org</code> — a real, publicly available FHIR endpoint.</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN PANEL -->
+    <main>
+      <!-- Resource header -->
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px">
+        <div style="display:flex;align-items:center;gap:12px">
+          <span id="panelIcon" style="font-size:32px">👤</span>
+          <div>
+            <h2 id="panelTitle" style="font-size:20px;font-weight:800;color:var(--text-primary)">Patient Resource</h2>
+            <p id="panelSub" style="color:var(--text-secondary);font-size:13px">Who the patient is: demographics, identity, and contact info.</p>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <span class="live-badge"><span class="live-dot"></span> Live Data</span>
+          <button class="fetch-btn" id="reloadBtn" onclick="reloadCurrent()">🔄 Load New</button>
+        </div>
+      </div>
+
+      <!-- Loading bar -->
+      <div id="loadingBar" class="loading-bar" style="display:none;margin-bottom:8px"></div>
+
+      <!-- Error -->
+      <div id="fetchError" class="fetch-error" style="display:none"></div>
+
+      <!-- Interactive layout: JSON + explanation panel -->
+      <div class="interactive-layout">
+        <div>
+          <div class="json-viewer-container">
+            <div class="json-viewer-header">
+              <div class="json-viewer-dots"><span></span><span></span><span></span></div>
+              <span class="json-viewer-title" id="jsonFilename">Patient.json</span>
+              <button class="json-copy-btn" onclick="copyFromPre()">📋 Copy</button>
+            </div>
+            <div class="json-viewer-body">
+              <pre id="jsonPre" style="cursor:default"></pre>
+            </div>
+          </div>
+          <p style="font-size:12px;color:var(--text-muted);margin-top:8px">
+            💡 <strong style="color:var(--teal-light)">Click any underlined field</strong> to see what it means.
+          </p>
+        </div>
+
+        <!-- Explain panel -->
+        <div>
+          <p style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Field Explanation</p>
+          <div class="explain-panel empty" id="explainPanel">
+            👆 Click a field name in the JSON
+          </div>
+        </div>
+      </div>
+
+      <!-- Field table -->
+      <div style="margin-top:28px">
+        <h3 style="font-size:15px;font-weight:700;color:var(--text-primary);margin-bottom:12px" id="tableTitle">Key Fields — Patient</h3>
+        <table class="field-table" id="fieldTable"></table>
+      </div>
+    </main>
+  </div>
+
+  <!-- QUIZ SECTION -->
+  <section class="section" style="border-top:1px solid var(--border);margin-top:48px;padding:48px 0 0">
+    <div class="section-eyebrow">🧠 Knowledge Check</div>
+    <div class="section-title">Test what you've learned</div>
+    <p class="section-subtitle">Answer these questions about reading FHIR JSON. Click any answer to reveal feedback.</p>
+    <div class="quiz-wrapper" id="quizBox"></div>
+    <div id="quizBox-score" style="display:none;margin-top:16px"></div>
+  </section>
+
+  <!-- COMPLETION -->
+  <div style="margin-top:48px;padding:40px;background:linear-gradient(135deg,rgba(20,184,166,0.08),rgba(6,182,212,0.05));border:1px solid rgba(20,184,166,0.2);border-radius:var(--radius-xl);text-align:center">
+    <div style="font-size:48px;margin-bottom:16px">🎉</div>
+    <h2 style="font-size:24px;font-weight:800;color:var(--text-primary);margin-bottom:8px">Almost there — one more module!</h2>
+    <p style="color:var(--text-secondary);font-size:15px;max-width:540px;margin:0 auto 28px;line-height:1.7">You can now read real FHIR JSON. In the final module, you'll practice building and sending real FHIR API queries yourself.</p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+      <a href="../index.html" class="btn btn-outline">← Back to Home</a>
+      <a href="api-practice.html" class="btn btn-primary">🧪 Try API Practice →</a>
+    </div>
+  </div>
+
+</div>
+
+<footer class="footer">
+  <p>FHIR Learn · Module 5 of 6 · <a href="../index.html">Back to home</a></p>
+</footer>
+
+<script src="../js/app.js"></script>
+<script>
+// ===================== ANNOTATIONS =====================
+const ANNOTATIONS = {
+  patient: {
+    resourceType: { text: 'Declares what kind of FHIR resource this is. Every FHIR resource starts with this field. For a patient record it will always be "Patient".', example: '"resourceType": "Patient"' },
+    id: { text: 'A unique identifier for this record inside the FHIR server. Other resources (like lab results or prescriptions) reference the patient using this ID.', example: '"id": "patient-12345"' },
+    meta: { text: 'Metadata about the record itself — when it was last updated, its version number, and the source system. Not clinical data.', example: '"meta": { "versionId": "1", "lastUpdated": "2024-01-01T..." }' },
+    identifier: { text: 'Real-world IDs assigned to this patient — like a Medical Record Number (MRN). Each identifier has a "system" (who assigned it) and a "value" (the actual ID).', example: '"identifier": [{ "system": "http://hospital.org/mrn", "value": "MRN-789" }]' },
+    name: { text: 'The patient\'s name(s) as a list. FHIR splits names into "family" (last name) and "given" (first + middle names). A list because patients can have multiple names (legal, preferred, maiden).', example: '"name": [{ "family": "Johnson", "given": ["Sarah"] }]' },
+    gender: { text: 'Administrative gender. Allowed values are: male, female, other, unknown. This is NOT clinical gender — it\'s the gender recorded for administrative purposes.', example: '"gender": "female"' },
+    birthDate: { text: 'The patient\'s date of birth in ISO 8601 format: YYYY-MM-DD. This standard format is used internationally so there\'s no confusion between day/month/year ordering.', example: '"birthDate": "1985-04-23"' },
+    telecom: { text: 'Contact information — phone numbers, email, fax. Each entry has a "system" (phone, email, fax) and "use" (home, work, mobile). A list because patients can have multiple contact methods.', example: '"telecom": [{ "system": "phone", "value": "512-555-0198", "use": "home" }]' },
+    address: { text: 'The patient\'s mailing address, split into structured components (line, city, state, zip, country). Split for data quality and international compatibility.', example: '"address": [{ "city": "Austin", "state": "TX", "postalCode": "78701" }]' },
+    active: { text: 'Whether this patient record is currently active. "true" means the record is in active use. "false" might mean a duplicate was merged or the patient is no longer at this facility.', example: '"active": true' },
+    text: { text: 'A human-readable summary of the resource, generated by the FHIR server. It\'s in HTML format and is meant for display purposes only — not for machine processing.', example: '"text": { "status": "generated", "div": "<div>...</div>" }' },
+    communication: { text: 'The patient\'s preferred language(s) for communication. Uses standard language codes (en = English, es = Spanish, etc.).', example: '"communication": [{ "language": { "coding": [{ "code": "en" }] }, "preferred": true }]' },
+    maritalStatus: { text: 'The patient\'s marital status using standard codes: M (Married), S (Single), D (Divorced), W (Widowed), etc.', example: '"maritalStatus": { "coding": [{ "code": "M", "display": "Married" }] }' },
+  },
+  observation: {
+    resourceType: { text: 'Declares this is an Observation resource — used for measurements, lab results, and vital signs.', example: '"resourceType": "Observation"' },
+    id: { text: 'A unique ID for this specific observation record in the FHIR server.', example: '"id": "obs-hba1c-001"' },
+    status: { text: 'The current state of this result. "final" = officially released. Other values: registered, preliminary, amended, corrected, cancelled, entered-in-error.', example: '"status": "final"' },
+    category: { text: 'What kind of observation this is. Common categories: laboratory (lab test), vital-signs, imaging, survey. Helps systems filter and display observations correctly.', example: '"category": [{ "coding": [{ "code": "laboratory" }] }]' },
+    code: { text: 'WHAT was measured — using a standardized code. Lab tests use LOINC codes (90,000+ standard clinical terms). For example, LOINC "4548-4" is the code for HbA1c.', example: '"code": { "coding": [{ "system": "http://loinc.org", "code": "4548-4", "display": "HbA1c" }] }' },
+    subject: { text: 'A reference to WHOSE result this is — links to the Patient resource using that patient\'s ID. The format "Patient/123" means Patient with ID 123.', example: '"subject": { "reference": "Patient/patient-001" }' },
+    effectiveDateTime: { text: 'WHEN the measurement was taken. The date or date+time of the actual observation (not when it was recorded in the system).', example: '"effectiveDateTime": "2024-11-15T10:30:00Z"' },
+    valueQuantity: { text: 'THE RESULT — the numerical value along with the unit of measure. Has three parts: value (the number), unit (human-readable like "%" or "mg/dL"), and code (machine-readable unit code).', example: '"valueQuantity": { "value": 6.8, "unit": "%", "code": "%" }' },
+    interpretation: { text: 'The lab\'s interpretation of the result vs. the normal range. H = High, L = Low, N = Normal, HH = Critical High, LL = Critical Low.', example: '"interpretation": [{ "coding": [{ "code": "H", "display": "High" }] }]' },
+    referenceRange: { text: 'The normal range for this test. Results outside this range may be flagged. Defined by the performing lab based on the patient population.', example: '"referenceRange": [{ "low": { "value": 4.0 }, "high": { "value": 5.6 } }]' },
+    meta: { text: 'FHIR server metadata — version, last updated timestamp, and source system tag.', example: '"meta": { "versionId": "1", "lastUpdated": "2024-01-01" }' },
+    text: { text: 'A human-readable HTML summary generated by the server for display purposes.', example: '"text": { "status": "generated", "div": "..." }' },
+    component: { text: 'Used when one observation has multiple values — for example blood pressure has two: systolic and diastolic. Each component has its own code and value.', example: '"component": [{ "code": {...}, "valueQuantity": { "value": 120 } }]' },
+  },
+  condition: {
+    resourceType: { text: 'Declares this is a Condition resource — used for diagnoses, problems, and health conditions.', example: '"resourceType": "Condition"' },
+    id: { text: 'Unique ID for this specific condition record.', example: '"id": "cond-diabetes-001"' },
+    clinicalStatus: { text: 'Is this condition currently active? Values: active, recurrence, relapse, inactive, remission, resolved. This helps filter which conditions are current vs. historical.', example: '"clinicalStatus": { "coding": [{ "code": "active" }] }' },
+    verificationStatus: { text: 'How certain is this diagnosis? Values: unconfirmed, provisional, differential, confirmed. "Confirmed" means a doctor has formally diagnosed it.', example: '"verificationStatus": { "coding": [{ "code": "confirmed" }] }' },
+    category: { text: '"problem-list-item" = chronic ongoing problem. "encounter-diagnosis" = diagnosed during a specific visit. Determines where the condition appears in the patient chart.', example: '"category": [{ "coding": [{ "code": "problem-list-item" }] }]' },
+    code: { text: 'The diagnosis code — usually ICD-10 (billing) and/or SNOMED CT (clinical). E.g., ICD-10 "E11.9" = Type 2 Diabetes. Both can be included in one record using a coding array.', example: '"code": { "coding": [{ "system": "http://hl7.org/fhir/sid/icd-10-cm", "code": "E11.9" }] }' },
+    subject: { text: 'Reference to the Patient this condition belongs to.', example: '"subject": { "reference": "Patient/patient-001" }' },
+    onsetDateTime: { text: 'When the condition first started or was first diagnosed.', example: '"onsetDateTime": "2018-03-15"' },
+    severity: { text: 'How severe the condition is: mild, moderate, or severe.', example: '"severity": { "coding": [{ "display": "Mild" }] }' },
+    meta: { text: 'Server metadata: version history, last updated timestamp.', example: '"meta": { "versionId": "1" }' },
+    text: { text: 'Human-readable HTML summary auto-generated by the server.', example: '"text": { "status": "generated" }' },
+  },
+  medication: {
+    resourceType: { text: 'Declares this is a MedicationRequest — a prescription or medication order.', example: '"resourceType": "MedicationRequest"' },
+    id: { text: 'Unique ID for this prescription record.', example: '"id": "rx-001"' },
+    status: { text: 'Current state of the prescription. Values: active, on-hold, cancelled, completed, stopped, draft. "active" means it\'s a current, valid prescription.', example: '"status": "active"' },
+    intent: { text: 'Is this a proposal, plan, or actual order? "order" = official prescription from a doctor. "proposal" = suggested by a clinical decision support system.', example: '"intent": "order"' },
+    medicationCodeableConcept: { text: 'The drug being prescribed, identified using RxNorm codes — the US standard drug terminology. Includes the drug name, strength, and form.', example: '"medicationCodeableConcept": { "coding": [{ "code": "860975", "display": "Metformin 500mg" }] }' },
+    subject: { text: 'Reference to the Patient this prescription is for.', example: '"subject": { "reference": "Patient/patient-001" }' },
+    requester: { text: 'The practitioner (doctor, NP, PA) who wrote the prescription.', example: '"requester": { "reference": "Practitioner/dr-001" }' },
+    authoredOn: { text: 'The date this prescription was written.', example: '"authoredOn": "2024-10-01"' },
+    dosageInstruction: { text: 'How to take the medication — dose amount, frequency, route (oral, injection, etc.), and free-text instructions for the patient.', example: '"dosageInstruction": [{ "text": "Take 1 tablet twice daily with meals" }]' },
+    dispenseRequest: { text: 'Pharmacy instructions — how many to dispense per fill and how many refills are authorized.', example: '"dispenseRequest": { "quantity": { "value": 60 }, "numberOfRepeatsAllowed": 5 }' },
+    meta: { text: 'Server metadata: version, last updated.', example: '"meta": { "versionId": "1" }' },
+    text: { text: 'Human-readable HTML summary.', example: '"text": { "status": "generated" }' },
+  },
+  encounter: {
+    resourceType: { text: 'Declares this is an Encounter — a patient visit or interaction with a healthcare provider.', example: '"resourceType": "Encounter"' },
+    id: { text: 'Unique ID for this specific visit record.', example: '"id": "enc-visit-001"' },
+    status: { text: 'State of the encounter: planned, arrived, triaged, in-progress, onleave, finished, cancelled. "finished" = the visit is complete.', example: '"status": "finished"' },
+    class: { text: 'Type of care setting. AMB = Outpatient/Ambulatory, IMP = Inpatient, EMER = Emergency, VR = Virtual/Telehealth.', example: '"class": { "code": "AMB", "display": "Ambulatory" }' },
+    type: { text: 'What kind of visit this was — annual physical, follow-up, consultation, etc. Uses SNOMED or CPT codes.', example: '"type": [{ "coding": [{ "display": "Annual physical" }] }]' },
+    subject: { text: 'Reference to the Patient this encounter is for.', example: '"subject": { "reference": "Patient/patient-001" }' },
+    participant: { text: 'Who participated in the visit — the providers and their roles (primary performer, witness, etc.).', example: '"participant": [{ "individual": { "reference": "Practitioner/dr-001" } }]' },
+    period: { text: 'When the encounter happened — start and end date/time. For outpatient visits, usually same day.', example: '"period": { "start": "2024-11-20T09:00:00Z", "end": "2024-11-20T09:30:00Z" }' },
+    reasonCode: { text: 'The clinical reason for the visit — why the patient came in.', example: '"reasonCode": [{ "coding": [{ "display": "Diabetes follow-up" }] }]' },
+    serviceProvider: { text: 'Reference to the Organization (hospital, clinic) where the encounter took place.', example: '"serviceProvider": { "reference": "Organization/clinic-001" }' },
+    meta: { text: 'Server metadata: version, last updated.', example: '"meta": { "versionId": "1" }' },
+    text: { text: 'Human-readable HTML summary.', example: '"text": { "status": "generated" }' },
+  }
+};
+
+// ===================== FIELD TABLES =====================
+const FIELD_TABLES = {
+  patient: [
+    ['resourceType', '"Patient"', 'Declares what type of FHIR resource this is'],
+    ['id', '"patient-001"', 'Unique ID used by other resources to reference this patient'],
+    ['identifier', 'system + value', 'Real-world IDs like MRN. "system" = who assigned it.'],
+    ['name.family / name.given', '"Johnson" / ["Sarah"]', 'Last name and first/middle names as a list'],
+    ['gender', '"female"', 'Administrative gender: male, female, other, unknown'],
+    ['birthDate', '"1985-04-23"', 'Date of birth in YYYY-MM-DD format (ISO 8601)'],
+    ['telecom', 'system + value', 'Phone, email, fax with type and use indicators'],
+    ['address', 'line, city, state...', 'Structured mailing address split into components'],
+  ],
+  observation: [
+    ['status', '"final"', 'Result state: registered → preliminary → final'],
+    ['category', '"laboratory"', 'Type: laboratory, vital-signs, imaging, survey'],
+    ['code', 'LOINC code', 'WHAT was measured — uses LOINC standard codes'],
+    ['subject', '"Patient/123"', 'Reference to whose result this is'],
+    ['effectiveDateTime', '"2024-11-15"', 'When the measurement was actually taken'],
+    ['valueQuantity', 'value + unit', 'The numeric result with unit of measure'],
+    ['interpretation', '"H" (High)', 'N=Normal, H=High, L=Low, HH=Critical High'],
+    ['referenceRange', 'low + high', 'The normal range; values outside this are flagged'],
+  ],
+  condition: [
+    ['clinicalStatus', '"active"', 'active / remission / resolved / inactive'],
+    ['verificationStatus', '"confirmed"', 'unconfirmed / provisional / confirmed'],
+    ['category', '"problem-list-item"', 'Chronic problem vs. encounter-specific diagnosis'],
+    ['code', 'ICD-10 + SNOMED', 'The diagnosis code — E11.9 = Type 2 Diabetes'],
+    ['subject', '"Patient/123"', 'Reference to the patient with this condition'],
+    ['onsetDateTime', '"2018-03-15"', 'When the condition first appeared'],
+    ['severity', '"mild"', 'mild / moderate / severe'],
+  ],
+  medication: [
+    ['status', '"active"', 'active / on-hold / cancelled / completed / stopped'],
+    ['intent', '"order"', 'proposal / plan / order (order = real prescription)'],
+    ['medicationCodeableConcept', 'RxNorm code', 'Drug + strength. RxNorm is the US drug terminology standard.'],
+    ['subject', '"Patient/123"', 'The patient this prescription is for'],
+    ['requester', 'Practitioner ref', 'The doctor who prescribed it'],
+    ['authoredOn', '"2024-10-01"', 'Date the prescription was written'],
+    ['dosageInstruction.text', '"Take 1 twice daily"', 'Human-readable instructions on the prescription label'],
+    ['dispenseRequest', 'quantity + refills', 'How many pills to dispense and how many refills allowed'],
+  ],
+  encounter: [
+    ['status', '"finished"', 'planned / in-progress / finished / cancelled'],
+    ['class', '"AMB"', 'AMB=Outpatient, IMP=Inpatient, EMER=Emergency, VR=Telehealth'],
+    ['type', 'SNOMED code', 'Kind of visit: annual physical, follow-up, consultation'],
+    ['subject', '"Patient/123"', 'The patient this visit belongs to'],
+    ['participant', 'Practitioner ref', 'Who was at the visit (providers and roles)'],
+    ['period', 'start + end', 'When the visit started and ended'],
+    ['reasonCode', 'SNOMED code', 'Clinical reason for the visit'],
+    ['serviceProvider', 'Organization ref', 'Which clinic or hospital this took place at'],
+  ]
+};
+
+// ===================== PANEL CONFIG =====================
+const PANELS = {
+  patient:     { icon:'👤', title:'Patient Resource',         sub:'Demographics, identity, and contact information.', filename:'Patient.json' },
+  observation: { icon:'🔬', title:'Observation Resource',     sub:'Lab results, vital signs, and measurements.',       filename:'Observation.json' },
+  condition:   { icon:'🩺', title:'Condition Resource',       sub:'Diagnoses, problems, and health conditions.',       filename:'Condition.json' },
+  medication:  { icon:'💊', title:'MedicationRequest Resource', sub:'Prescriptions — drug, dose, and instructions.', filename:'MedicationRequest.json' },
+  encounter:   { icon:'🏥', title:'Encounter Resource',       sub:'Patient visits — office, ER, telehealth, inpatient.', filename:'Encounter.json' },
+};
+
+const FHIR_URLS = {
+  patient:     'https://hapi.fhir.org/baseR4/Patient?_count=1&_format=json',
+  observation: 'https://hapi.fhir.org/baseR4/Observation?_count=1&_format=json&status=final',
+  condition:   'https://hapi.fhir.org/baseR4/Condition?_count=1&_format=json',
+  medication:  'https://hapi.fhir.org/baseR4/MedicationRequest?_count=1&_format=json',
+  encounter:   'https://hapi.fhir.org/baseR4/Encounter?_count=1&_format=json',
+};
+
+// Offsets for "Load New"
+const offsets = { patient:0, observation:0, condition:0, medication:0, encounter:0 };
+
+let currentPanel = 'patient';
+let currentAnnotations = ANNOTATIONS.patient;
+
+// ===================== FETCH + RENDER =====================
+async function loadPanel(key, btn) {
+  currentPanel = key;
+  currentAnnotations = ANNOTATIONS[key];
+  // Nav active state
+  document.querySelectorAll('.example-nav-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  // Update header
+  const cfg = PANELS[key];
+  document.getElementById('panelIcon').textContent = cfg.icon;
+  document.getElementById('panelTitle').textContent = cfg.title;
+  document.getElementById('panelSub').textContent = cfg.sub;
+  document.getElementById('jsonFilename').textContent = cfg.filename;
+  document.getElementById('tableTitle').textContent = 'Key Fields — ' + key.charAt(0).toUpperCase() + key.slice(1);
+  // Reset explain panel
+  resetExplain();
+  // Fetch
+  await fetchAndRender(key);
+  // Render field table
+  renderTable(key);
+}
+
+async function fetchAndRender(key) {
+  const pre = document.getElementById('jsonPre');
+  const bar = document.getElementById('loadingBar');
+  const err = document.getElementById('fetchError');
+  const btn = document.getElementById('reloadBtn');
+
+  bar.style.display = 'block';
+  err.style.display = 'none';
+  btn.disabled = true;
+  pre.innerHTML = '<span style="color:var(--text-muted)">Loading live data from hapi.fhir.org...</span>';
+
+  try {
+    const offset = offsets[key];
+    const url = FHIR_URLS[key].replace('_count=1', `_count=1&_getpagesoffset=${offset}`);
+    const resp = await fetch(url);
+    if (!resp.ok) throw new Error('Server returned ' + resp.status);
+    const bundle = await resp.json();
+    let resource;
+    if (bundle.entry && bundle.entry.length > 0) {
+      resource = bundle.entry[0].resource;
+    } else if (bundle.resourceType && bundle.resourceType !== 'Bundle') {
+      resource = bundle;
+    } else {
+      throw new Error('No records found');
+    }
+    offsets[key] = (offset + 1) % 50;
+    renderInteractiveJson(resource, currentAnnotations);
+  } catch(e) {
+    err.textContent = '⚠️ Could not reach FHIR server: ' + e.message + '. This is a live public API — try again in a moment.';
+    err.style.display = 'block';
+    pre.innerHTML = '<span style="color:var(--text-muted)">No data loaded.</span>';
+  } finally {
+    bar.style.display = 'none';
+    btn.disabled = false;
+  }
+}
+
+function reloadCurrent() {
+  fetchAndRender(currentPanel);
+  resetExplain();
+}
+
+function renderInteractiveJson(obj, annotations) {
+  const pre = document.getElementById('jsonPre');
+  const json = JSON.stringify(obj, null, 2);
+  const html = json.replace(/(\"(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*\"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?|[{}\[\],])/g, function(match) {
+    if (/^\"/.test(match) && /:$/.test(match)) {
+      const rawKey = match.replace(/^"|":/g, '');
+      const cleanKey = rawKey.replace(/:$/, '');
+      const info = annotations && annotations[rawKey];
+      if (info) {
+        return `<span class="json-key json-key-clickable" data-key="${rawKey}">"${cleanKey}"</span>:`;
+      }
+      return `<span class="json-key">"${cleanKey}"</span>:`;
+    }
+    let cls = 'json-number';
+    if (/^\"/.test(match)) cls = 'json-string';
+    else if (/true|false/.test(match)) cls = 'json-bool';
+    else if (/null/.test(match)) cls = 'json-null';
+    else if (/[{}\[\]]/.test(match)) cls = 'json-brace';
+    else if (/,/.test(match)) cls = 'json-comma';
+    return `<span class="${cls}">${match}</span>`;
+  });
+  pre.innerHTML = html;
+
+  // Attach click listeners
+  pre.querySelectorAll('.json-key-clickable').forEach(span => {
+    span.addEventListener('click', () => {
+      const key = span.dataset.key;
+      const info = currentAnnotations[key];
+      if (!info) return;
+      pre.querySelectorAll('.json-key-clickable').forEach(s => s.classList.remove('selected'));
+      span.classList.add('selected');
+      showExplain(key, info);
+    });
+  });
+}
+
+function showExplain(key, info) {
+  const panel = document.getElementById('explainPanel');
+  panel.classList.remove('empty');
+  panel.innerHTML = `
+    <div class="explain-key">"${key}"</div>
+    <div class="explain-text">${info.text}</div>
+    ${info.example ? `<div class="explain-example">${info.example}</div>` : ''}
+  `;
+}
+
+function resetExplain() {
+  const panel = document.getElementById('explainPanel');
+  panel.classList.add('empty');
+  panel.innerHTML = '👆 Click a field name in the JSON';
+}
+
+function renderTable(key) {
+  const rows = FIELD_TABLES[key] || [];
+  const table = document.getElementById('fieldTable');
+  table.innerHTML = `
+    <thead><tr>
+      <th style="text-align:left;padding:10px 14px;background:var(--bg-surface);color:var(--text-muted);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px">Field</th>
+      <th style="text-align:left;padding:10px 14px;background:var(--bg-surface);color:var(--text-muted);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px">Example Value</th>
+      <th style="text-align:left;padding:10px 14px;background:var(--bg-surface);color:var(--text-muted);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px">What it means</th>
+    </tr></thead>
+    <tbody>
+      ${rows.map(([f,v,m]) => `
+        <tr>
+          <td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-code);font-family:'JetBrains Mono',monospace;font-size:12px">${f}</td>
+          <td style="padding:10px 14px;border-bottom:1px solid var(--border);color:#86efac;font-family:'JetBrains Mono',monospace;font-size:12px">${v}</td>
+          <td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-secondary);font-size:13px;line-height:1.5">${m}</td>
+        </tr>`).join('')}
+    </tbody>`;
+}
+
+function copyFromPre() {
+  const text = document.getElementById('jsonPre').innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('[onclick="copyFromPre()"]');
+    btn.innerHTML = '✅ Copied!'; btn.classList.add('copied');
+    setTimeout(() => { btn.innerHTML = '📋 Copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+// ===================== QUIZ =====================
+const QUIZ_QUESTIONS = [
+  {
+    question: 'What does <code>"resourceType": "Patient"</code> tell a FHIR system?',
+    options: ['"This is a resource from a hospital named Patient"', '"This JSON object is a Patient record — use the Patient rules to read it"', '"The patient\'s name is Patient"', '"This field is optional and can be ignored"'],
+    correct: 1,
+    explanation: 'Every FHIR resource starts with resourceType. It tells the receiving system exactly what kind of data it\'s looking at so it knows which rules and fields to expect.'
+  },
+  {
+    question: 'In FHIR JSON, why is the patient\'s name stored as a <strong>list</strong> (with square brackets <code>[ ]</code>)?',
+    options: ['Because FHIR always uses lists for everything', 'Because a patient can have multiple names — legal name, preferred name, maiden name, etc.', 'Because lists are faster to process than single values', 'It\'s purely a formatting choice with no practical reason'],
+    correct: 1,
+    explanation: 'Square brackets in JSON represent a list. Names are a list because patients can legally have multiple names — official, nickname, name before marriage, etc.'
+  },
+  {
+    question: 'A lab result shows <code>"status": "final"</code>. What does this mean?',
+    options: ['The lab is closed and won\'t accept more samples', 'This is the last lab result the patient will ever have', 'The result has been officially reviewed and released — it\'s the authoritative result', 'The result is preliminary and may change'],
+    correct: 2,
+    explanation: '"final" means the result has been reviewed and officially released by the lab. Results can start as "registered" → "preliminary" → "final". "final" is what you act on clinically.'
+  },
+  {
+    question: 'What is the purpose of <code>"subject": { "reference": "Patient/patient-001" }</code> in an Observation?',
+    options: ['It stores the patient\'s full medical history', 'It links this lab result to the correct patient record using the patient\'s FHIR ID', 'It is the patient\'s username for the patient portal', 'It specifies which doctor ordered this test'],
+    correct: 1,
+    explanation: 'The "subject" field is a reference — it links this Observation to the Patient resource with ID "patient-001". This is how FHIR resources connect to each other: like hyperlinks between records.'
+  },
+  {
+    question: 'An Encounter shows <code>"class": { "code": "AMB" }</code>. What type of visit is this?',
+    options: ['An ambulance emergency transport', 'An inpatient hospital stay (patient admitted overnight)', 'An outpatient/ambulatory visit (patient comes in and goes home same day)', 'A virtual/telehealth appointment'],
+    correct: 2,
+    explanation: 'AMB = Ambulatory, which means outpatient — the patient came in for a visit but was not admitted. Other codes: IMP = Inpatient, EMER = Emergency, VR = Virtual/Telehealth.'
+  }
+];
+
+// ===================== INIT =====================
+document.addEventListener('DOMContentLoaded', () => {
+  loadPanel('patient', document.querySelector('.example-nav-btn.active'));
+  initQuiz('quizBox', QUIZ_QUESTIONS);
+});
+</script>
+</body>
+</html>

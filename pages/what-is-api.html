@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>What is an API? — FHIR Learn</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="../styles/main.css"/>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-logo">
+      <div class="nav-logo-icon">🏥</div>
+      <span class="nav-logo-text">FHIR Learn</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="../index.html">🏠 Home</a></li>
+      <li><a href="what-is-api.html" class="active">🔌 What is an API?</a></li>
+      <li><a href="fhir-basics.html">📘 FHIR Basics</a></li>
+      <li><a href="resources.html">📦 Resources</a></li>
+      <li><a href="examples.html">💡 Examples <span class="nav-badge">JSON</span></a></li>
+      <li><a href="api-practice.html">🧪 API Practice</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="breadcrumb container-wide">
+  <a href="../index.html">Home</a>
+  <span class="breadcrumb-sep">›</span>
+  <span>What is an API?</span>
+</div>
+
+<div class="page-hero">
+  <div class="page-hero-eyebrow">📖 Module 1 of 6</div>
+  <h1>What is an <span>API</span>?</h1>
+  <p>Before diving into FHIR, you need to understand APIs — because FHIR is built on them. The good news: APIs are much simpler than they sound.</p>
+</div>
+
+<div class="container-wide">
+
+  <!-- SECTION: The Waiter Analogy -->
+  <section class="section">
+    <div class="section-eyebrow">🍽️ Start with an Analogy</div>
+    <div class="section-title">Think of an API like a waiter</div>
+
+    <div class="callout analogy">
+      <div class="callout-icon">🍽️</div>
+      <div class="callout-content">
+        <div class="callout-title">The Restaurant Analogy</div>
+        <div class="callout-body">
+          Imagine you're at a restaurant. You (the customer) can't walk into the kitchen to get your food — 
+          that would be chaotic. Instead, you tell the <strong>waiter</strong> what you want. 
+          The waiter goes to the kitchen, gets your food, and brings it back to you.<br/><br/>
+          In software: <strong>You = your app, Waiter = API, Kitchen = another system's data</strong>.<br/>
+          The API takes your request, goes to the data source, and returns the information you asked for.
+        </div>
+      </div>
+    </div>
+
+    <div class="card-grid" style="margin-top:28px">
+      <div class="card">
+        <div class="icon-box teal">📱</div>
+        <h3 class="card-title">The App (You)</h3>
+        <p class="card-body">The thing making the request. Could be a hospital portal, an EHR system, a mobile app, or a data analytics tool — anything that needs information.</p>
+      </div>
+      <div class="card">
+        <div class="icon-box cyan">🔌</div>
+        <h3 class="card-title">The API (The Waiter)</h3>
+        <p class="card-body">The "messenger" that carries requests and responses between systems. It defines the rules: what you can ask for, how to ask it, and what format you'll get back.</p>
+      </div>
+      <div class="card">
+        <div class="icon-box blue">🗄️</div>
+        <h3 class="card-title">The System (The Kitchen)</h3>
+        <p class="card-body">The system that holds the actual data — like an EHR (Epic, Cerner), a lab system, or a pharmacy system. It processes your request and sends the data back.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION: Real Healthcare Example -->
+  <section class="section">
+    <div class="section-eyebrow">🏥 In Healthcare</div>
+    <div class="section-title">A real-world API example: Getting a patient's lab results</div>
+
+    <div class="step-list">
+      <div class="step-item">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <h4>A doctor opens the patient portal</h4>
+          <p>The portal app needs to show the patient's recent blood test results. It sends a request to the EHR's API: "Give me the lab results for patient ID 12345."</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <h4>The API receives the request</h4>
+          <p>The API checks: Is this request properly formatted? Does the requester have permission? Is the patient ID valid? If everything is okay, it passes the request to the EHR database.</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <h4>The EHR retrieves the data</h4>
+          <p>The EHR looks up patient 12345 in its database and finds all the lab results. It packages this data in a structured format (JSON in FHIR's case).</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <h4>The API returns the data</h4>
+          <p>The API sends the lab results back to the portal. The portal reads the data and displays it in a readable way for the doctor. All of this happens in under a second.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout info" style="margin-top:28px">
+      <div class="callout-icon">ℹ️</div>
+      <div class="callout-content">
+        <div class="callout-title">Key Insight for BAs</div>
+        <div class="callout-body">When you write requirements like "the system shall display the patient's most recent lab results," you are implicitly requiring an API call. Understanding APIs helps you ask the right questions: What data is available? How often can we call the API? What happens if it fails?</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION: API Concepts -->
+  <section class="section">
+    <div class="section-eyebrow">📚 Key Concepts</div>
+    <div class="section-title">Terms you'll hear and what they mean</div>
+
+    <div class="card-grid-2" style="margin-top:28px">
+
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+          <span class="badge teal">GET</span>
+          <h3 class="card-title" style="margin-bottom:0">GET Request — "Give me data"</h3>
+        </div>
+        <p class="card-body">The most common type. Used to <em>retrieve</em> information. Think of it as asking: "Can I see the patient's record?" Nothing changes — you're just reading.</p>
+        <div class="callout tip" style="margin-top:12px">
+          <div class="callout-icon">💡</div>
+          <div class="callout-content">
+            <div class="callout-body">Example: GET /Patient/12345 → Returns the patient record for ID 12345</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+          <span class="badge orange">POST</span>
+          <h3 class="card-title" style="margin-bottom:0">POST Request — "Create new data"</h3>
+        </div>
+        <p class="card-body">Used to <em>create</em> something new. Think of it as submitting a new patient registration form — new data gets added to the system.</p>
+        <div class="callout tip" style="margin-top:12px">
+          <div class="callout-icon">💡</div>
+          <div class="callout-content">
+            <div class="callout-body">Example: POST /Patient → Creates a brand-new patient record</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+          <span class="badge blue">PUT</span>
+          <h3 class="card-title" style="margin-bottom:0">PUT Request — "Update existing data"</h3>
+        </div>
+        <p class="card-body">Used to <em>update</em> an existing record. Like changing a patient's address or phone number in the system — you're replacing old information with new.</p>
+        <div class="callout tip" style="margin-top:12px">
+          <div class="callout-icon">💡</div>
+          <div class="callout-content">
+            <div class="callout-body">Example: PUT /Patient/12345 → Updates the full record for patient 12345</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+          <span class="badge red">DELETE</span>
+          <h3 class="card-title" style="margin-bottom:0">DELETE Request — "Remove data"</h3>
+        </div>
+        <p class="card-body">Used to <em>delete</em> a record. In healthcare, this is rare and tightly controlled due to legal requirements for data retention.</p>
+        <div class="callout warning" style="margin-top:12px">
+          <div class="callout-icon">⚠️</div>
+          <div class="callout-content">
+            <div class="callout-body">Healthcare systems rarely allow true deletion due to HIPAA and audit requirements.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SECTION: Endpoint -->
+  <section class="section">
+    <div class="section-eyebrow">🔗 Important Term</div>
+    <div class="section-title">What is an "endpoint"?</div>
+    <p class="section-subtitle">You'll hear this word constantly in API conversations. It simply means the specific address (URL) you send your request to.</p>
+
+    <div class="callout analogy">
+      <div class="callout-icon">📮</div>
+      <div class="callout-content">
+        <div class="callout-title">Think of it like a mailing address</div>
+        <div class="callout-body">
+          Just like you send a letter to "123 Main St, Apt 4B", you send an API request to a specific URL (endpoint). Each endpoint does a specific thing. The FHIR standard defines exactly what these addresses look like.<br/><br/>
+          Example FHIR endpoints:<br/>
+          • <code style="color:var(--teal-light)">GET /Patient/123</code> → Get patient with ID 123<br/>
+          • <code style="color:var(--teal-light)">GET /Observation?patient=123</code> → Get all observations for patient 123<br/>
+          • <code style="color:var(--teal-light)">POST /Appointment</code> → Schedule a new appointment
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NAVIGATION -->
+  <section class="section" style="border-top:1px solid var(--border)">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px">
+      <a href="../index.html" class="btn btn-outline">← Back to Home</a>
+      <div>
+        <p style="font-size:13px;color:var(--text-muted);margin-bottom:8px;text-align:right">Next Module →</p>
+        <a href="fhir-basics.html" class="btn btn-primary">📘 FHIR Basics →</a>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer class="footer">
+  <p>FHIR Learn · Module 1 of 6 · <a href="../index.html">Back to home</a></p>
+</footer>
+
+<script src="../js/app.js"></script>
+</body>
+</html>

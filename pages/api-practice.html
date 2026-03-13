@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FHIR API Practice — FHIR Learn</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="../styles/main.css"/>
+  <style>
+    /* ── Query Builder ── */
+    .builder-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    @media(max-width:640px){ .builder-grid{grid-template-columns:1fr;} }
+
+    .builder-label {
+      display:block; font-size:11px; font-weight:700; color:var(--text-muted);
+      text-transform:uppercase; letter-spacing:0.8px; margin-bottom:6px;
+    }
+    .builder-select, .builder-input {
+      width:100%; padding:10px 14px; background:var(--bg-surface);
+      border:1px solid var(--border); border-radius:var(--radius-sm);
+      color:var(--text-primary); font-size:14px; font-family:inherit;
+      outline:none; transition:border-color var(--ease), box-shadow var(--ease);
+      appearance:none;
+    }
+    .builder-select:focus, .builder-input:focus {
+      border-color:var(--teal); box-shadow:0 0 0 3px rgba(20,184,166,0.12);
+    }
+    .builder-select option { background:var(--bg-card); }
+
+    /* ── URL preview ── */
+    .url-bar {
+      background:var(--bg-surface); border:1px solid var(--border);
+      border-radius:var(--radius-sm); padding:12px 16px; margin-top:16px;
+      font-family:'JetBrains Mono',monospace; font-size:13px; word-break:break-all;
+      line-height:1.8; min-height:44px;
+    }
+    .url-segment { display:inline; }
+    .url-base    { color:var(--text-muted); }
+    .url-path    { color:#f9a8d4; }
+    .url-resource{ color:var(--teal-light); font-weight:700; }
+    .url-q       { color:var(--text-muted); }
+    .url-key     { color:#7dd3fc; }
+    .url-eq      { color:var(--text-muted); }
+    .url-val     { color:#86efac; }
+    .url-amp     { color:var(--text-muted); }
+
+    /* ── URL breakdown legend ── */
+    .url-legend {
+      display:flex; flex-wrap:wrap; gap:10px; margin-top:12px; font-size:12px;
+    }
+    .url-legend-item {
+      display:flex; align-items:center; gap:6px; background:var(--bg-surface);
+      border:1px solid var(--border); border-radius:20px; padding:4px 12px;
+    }
+    .url-legend-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+
+    /* ── Send button ── */
+    .send-btn {
+      display:inline-flex; align-items:center; gap:8px;
+      padding:12px 28px; background:linear-gradient(135deg,var(--teal),#0891b2);
+      color:#fff; border:none; border-radius:var(--radius-sm); font-size:14px;
+      font-weight:700; font-family:inherit; cursor:pointer;
+      transition:opacity var(--ease), transform var(--ease); margin-top:16px;
+    }
+    .send-btn:hover { opacity:0.9; transform:translateY(-1px); }
+    .send-btn:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
+
+    /* ── Response meta bar ── */
+    .resp-meta {
+      display:flex; gap:16px; flex-wrap:wrap; margin-bottom:10px; font-size:12px;
+    }
+    .resp-pill {
+      display:inline-flex; align-items:center; gap:5px;
+      background:var(--bg-surface); border:1px solid var(--border);
+      border-radius:20px; padding:4px 12px; color:var(--text-secondary);
+    }
+    .pill-ok  { border-color:rgba(20,184,166,0.4); color:var(--teal-light); }
+    .pill-err { border-color:rgba(239,68,68,0.4);  color:#fc8181; }
+
+    /* ── Challenge cards ── */
+    .challenge-card {
+      background:var(--bg-card); border:1px solid var(--border);
+      border-radius:var(--radius-lg); padding:24px; margin-bottom:16px;
+      transition:border-color var(--ease);
+    }
+    .challenge-card.solved { border-color:rgba(20,184,166,0.5); }
+    .challenge-num {
+      display:inline-flex; align-items:center; justify-content:center;
+      width:28px; height:28px; border-radius:50%;
+      background:rgba(20,184,166,0.15); color:var(--teal-light);
+      font-size:13px; font-weight:800; margin-bottom:12px;
+    }
+    .challenge-title { font-size:15px; font-weight:700; color:var(--text-primary); margin-bottom:4px; }
+    .challenge-hint  { font-size:13px; color:var(--text-secondary); margin-bottom:14px; }
+    .check-btn {
+      display:inline-flex; align-items:center; gap:6px;
+      padding:8px 18px; background:var(--bg-surface); border:1px solid var(--border);
+      border-radius:var(--radius-sm); color:var(--text-secondary); font-size:13px;
+      font-weight:600; font-family:inherit; cursor:pointer;
+      transition:all var(--ease);
+    }
+    .check-btn:hover { border-color:var(--teal); color:var(--teal-light); }
+    .challenge-status { margin-top:10px; font-size:13px; }
+    .status-pass { color:var(--teal-light); font-weight:600; }
+    .status-fail { color:#fc8181; font-weight:600; }
+
+    /* ── Tip box that changes per resource ── */
+    .context-tip {
+      background:rgba(6,182,212,0.06); border:1px solid rgba(6,182,212,0.2);
+      border-radius:var(--radius-sm); padding:12px 16px; margin-top:12px;
+      font-size:13px; color:var(--text-secondary); line-height:1.6;
+      transition:opacity 0.25s;
+    }
+    .context-tip strong { color:#67e8f9; }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-logo">
+      <div class="nav-logo-icon">🏥</div>
+      <span class="nav-logo-text">FHIR Learn</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="../index.html">🏠 Home</a></li>
+      <li><a href="what-is-api.html">🔌 What is an API?</a></li>
+      <li><a href="fhir-basics.html">📘 FHIR Basics</a></li>
+      <li><a href="resources.html">📦 Resources</a></li>
+      <li><a href="examples.html">💡 Examples <span class="nav-badge">JSON</span></a></li>
+      <li><a href="api-practice.html" class="active">🧪 API Practice <span class="nav-badge" style="background:rgba(139,92,246,0.2);color:#c4b5fd;border-color:rgba(139,92,246,0.3)">NEW</span></a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="breadcrumb container-wide">
+  <a href="../index.html">Home</a>
+  <span class="breadcrumb-sep">›</span>
+  <span>API Practice</span>
+</div>
+
+<div class="page-hero">
+  <div class="page-hero-eyebrow">📖 Module 6 of 6</div>
+  <h1>FHIR <span>API Practice</span></h1>
+  <p>Build real FHIR queries, send them to a live server, and see exactly what comes back — no sign-up, no cost.</p>
+</div>
+
+<div class="container-wide">
+
+  <!-- HOW THIS WORKS -->
+  <div class="callout tip" style="margin-bottom:32px">
+    <div class="callout-icon">🌐</div>
+    <div class="callout-content">
+      <div class="callout-title">Free public FHIR server — no account needed</div>
+      <div class="callout-body">Every query you build is sent to the <strong>HAPI FHIR R4</strong> public test server at <code style="color:var(--teal-light)">hapi.fhir.org</code>. It's completely free and open to anyone. You are only doing <strong>GET</strong> requests (reading data) — nothing is created or deleted.</div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       SECTION 1 — QUERY BUILDER
+  ════════════════════════════════════════ -->
+  <section class="section">
+    <div class="section-eyebrow">🎯 Step 1</div>
+    <div class="section-title">Build your FHIR query</div>
+    <p class="section-subtitle">Pick a resource and set parameters below. The URL assembles automatically.</p>
+
+    <div class="card" style="margin-top:24px">
+
+      <!-- Row 1: resource + count -->
+      <div class="builder-grid" style="margin-bottom:16px">
+        <div>
+          <label class="builder-label" for="selResource">Resource type</label>
+          <select class="builder-select" id="selResource" onchange="onBuilderChange()">
+            <option value="Patient">👤 Patient</option>
+            <option value="Observation">🔬 Observation</option>
+            <option value="Condition">🩺 Condition</option>
+            <option value="MedicationRequest">💊 MedicationRequest</option>
+            <option value="Encounter">🏥 Encounter</option>
+          </select>
+        </div>
+        <div>
+          <label class="builder-label" for="selCount">_count (max results)</label>
+          <select class="builder-select" id="selCount" onchange="onBuilderChange()">
+            <option value="1">1</option>
+            <option value="3" selected>3</option>
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="20">20</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Row 2: status + extra param -->
+      <div class="builder-grid" style="margin-bottom:16px">
+        <div>
+          <label class="builder-label" for="selStatus">status filter <span style="font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label>
+          <select class="builder-select" id="selStatus" onchange="onBuilderChange()">
+            <option value="">— none —</option>
+            <option value="active">active</option>
+            <option value="final">final</option>
+            <option value="finished">finished</option>
+            <option value="completed">completed</option>
+            <option value="stopped">stopped</option>
+          </select>
+        </div>
+        <div>
+          <label class="builder-label" for="selSort">_sort <span style="font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label>
+          <select class="builder-select" id="selSort" onchange="onBuilderChange()">
+            <option value="">— none —</option>
+            <option value="-_lastUpdated">Newest first (-_lastUpdated)</option>
+            <option value="_lastUpdated">Oldest first (_lastUpdated)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Row 3: free ID lookup -->
+      <div style="margin-bottom:16px">
+        <label class="builder-label" for="inpId">Fetch by ID <span style="font-weight:400;text-transform:none;letter-spacing:0">(optional — overrides other params)</span></label>
+        <input class="builder-input" id="inpId" type="text" placeholder='e.g. 592821  — paste any FHIR resource ID here' oninput="onBuilderChange()"/>
+      </div>
+
+      <!-- URL preview -->
+      <div>
+        <div class="builder-label">Assembled URL (live preview)</div>
+        <div class="url-bar" id="urlPreview"></div>
+        <!-- Legend -->
+        <div class="url-legend">
+          <div class="url-legend-item"><div class="url-legend-dot" style="background:#f9a8d4"></div><span style="color:var(--text-secondary)">Base path</span></div>
+          <div class="url-legend-item"><div class="url-legend-dot" style="background:var(--teal-light)"></div><span style="color:var(--text-secondary)">Resource type</span></div>
+          <div class="url-legend-item"><div class="url-legend-dot" style="background:#7dd3fc"></div><span style="color:var(--text-secondary)">Parameter name</span></div>
+          <div class="url-legend-item"><div class="url-legend-dot" style="background:#86efac"></div><span style="color:var(--text-secondary)">Parameter value</span></div>
+        </div>
+      </div>
+
+      <!-- Context tip -->
+      <div class="context-tip" id="contextTip"></div>
+
+      <!-- Send button -->
+      <button class="send-btn" id="sendBtn" onclick="sendRequest()">
+        ▶ Send Request
+      </button>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════
+       SECTION 2 — RESPONSE
+  ════════════════════════════════════════ -->
+  <section class="section">
+    <div class="section-eyebrow">📨 Step 2</div>
+    <div class="section-title">The server's response</div>
+    <p class="section-subtitle">The raw JSON that a real FHIR server returns. This is exactly what a developer's code receives.</p>
+
+    <!-- loading + error -->
+    <div id="loadingBar" class="loading-bar" style="display:none;margin:12px 0"></div>
+    <div id="fetchError" class="fetch-error" style="display:none;margin-bottom:12px"></div>
+
+    <!-- meta pills -->
+    <div class="resp-meta" id="respMeta" style="display:none"></div>
+
+    <!-- JSON viewer -->
+    <div class="json-viewer-container">
+      <div class="json-viewer-header">
+        <div class="json-viewer-dots"><span></span><span></span><span></span></div>
+        <span class="json-viewer-title" id="respFilename">response.json</span>
+        <button class="json-copy-btn" onclick="copyJson('respPre',this)">📋 Copy</button>
+      </div>
+      <div class="json-viewer-body" style="max-height:480px;overflow-y:auto">
+        <pre id="respPre" style="color:var(--text-muted);font-size:13px">// Hit "Send Request" above to see the live response here.</pre>
+      </div>
+    </div>
+
+    <!-- What am I looking at? -->
+    <div id="bundleExplain" style="display:none;margin-top:16px">
+      <div class="callout info">
+        <div class="callout-icon">📦</div>
+        <div class="callout-content">
+          <div class="callout-title">What is this "Bundle"?</div>
+          <div class="callout-body">
+            When you search for multiple records, FHIR wraps them in a <strong>Bundle</strong> — a container object.
+            The actual records are inside the <code style="color:var(--teal-light)">entry</code> array.
+            Each entry has a <code style="color:var(--teal-light)">resource</code> field with the actual data.<br/><br/>
+            <strong>total</strong> = how many matching records exist on the server<br/>
+            <strong>entry</strong> = the records returned in this response (limited by <code style="color:var(--teal-light)">_count</code>)
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════
+       SECTION 3 — CHALLENGE EXERCISES
+  ════════════════════════════════════════ -->
+  <section class="section" style="border-top:1px solid var(--border)">
+    <div class="section-eyebrow">🏋️ Step 3</div>
+    <div class="section-title">Challenge exercises</div>
+    <p class="section-subtitle">Use the query builder above to solve each challenge, then click "Check My URL" to verify.</p>
+
+    <!-- Challenge 1 -->
+    <div class="challenge-card" id="ch1">
+      <div class="challenge-num">1</div>
+      <div class="challenge-title">Fetch exactly 5 Patient records</div>
+      <div class="challenge-hint">💡 Hint: Set the resource to <strong>Patient</strong> and adjust the <strong>_count</strong> parameter to 5.</div>
+      <button class="check-btn" onclick="checkChallenge(1)">🔍 Check My URL</button>
+      <div class="challenge-status" id="ch1-status"></div>
+    </div>
+
+    <!-- Challenge 2 -->
+    <div class="challenge-card" id="ch2">
+      <div class="challenge-num">2</div>
+      <div class="challenge-title">Fetch Observations with status = "final"</div>
+      <div class="challenge-hint">💡 Hint: Select <strong>Observation</strong> as the resource, then set the <strong>status</strong> filter to <em>final</em>.</div>
+      <button class="check-btn" onclick="checkChallenge(2)">🔍 Check My URL</button>
+      <div class="challenge-status" id="ch2-status"></div>
+    </div>
+
+    <!-- Challenge 3 -->
+    <div class="challenge-card" id="ch3">
+      <div class="challenge-num">3</div>
+      <div class="challenge-title">Fetch 10 MedicationRequests sorted by newest first</div>
+      <div class="challenge-hint">💡 Hint: Select <strong>MedicationRequest</strong>, set _count to <strong>10</strong>, and set _sort to <strong>Newest first</strong>.</div>
+      <button class="check-btn" onclick="checkChallenge(3)">🔍 Check My URL</button>
+      <div class="challenge-status" id="ch3-status"></div>
+    </div>
+
+  </section>
+
+  <!-- ════════════════════════════════════════
+       SECTION 4 — FHIR URL ANATOMY
+  ════════════════════════════════════════ -->
+  <section class="section" style="border-top:1px solid var(--border)">
+    <div class="section-eyebrow">🔬 FHIR URL Anatomy</div>
+    <div class="section-title">Every FHIR URL follows the same pattern</div>
+    <p class="section-subtitle">Understanding the URL structure lets you read — and write — any FHIR query.</p>
+
+    <div class="card" style="margin-top:24px">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:14px;line-height:2.2;word-break:break-all;margin-bottom:20px">
+        <span style="color:#f9a8d4">https://hapi.fhir.org/baseR4</span><span style="color:var(--text-muted)">/</span><span style="color:var(--teal-light)">Patient</span><span style="color:var(--text-muted)">?</span><span style="color:#7dd3fc">_count</span><span style="color:var(--text-muted)">=</span><span style="color:#86efac">5</span><span style="color:var(--text-muted)">&amp;</span><span style="color:#7dd3fc">status</span><span style="color:var(--text-muted)">=</span><span style="color:#86efac">active</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;gap:12px;align-items:flex-start">
+          <span style="width:14px;height:14px;border-radius:3px;background:#f9a8d4;flex-shrink:0;margin-top:3px"></span>
+          <div><strong style="color:var(--text-primary)">Base URL</strong> — <span style="color:var(--text-secondary);font-size:13px">The server address. Every query starts with this. In real projects, this would be your hospital's EHR endpoint instead of hapi.fhir.org.</span></div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start">
+          <span style="width:14px;height:14px;border-radius:3px;background:var(--teal-light);flex-shrink:0;margin-top:3px"></span>
+          <div><strong style="color:var(--text-primary)">Resource type</strong> — <span style="color:var(--text-secondary);font-size:13px">Which FHIR resource to query. Always capitalized: <code style="color:var(--teal-light)">Patient</code>, <code style="color:var(--teal-light)">Observation</code>, <code style="color:var(--teal-light)">Encounter</code>, etc.</span></div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start">
+          <span style="width:14px;height:14px;border-radius:3px;background:#7dd3fc;flex-shrink:0;margin-top:3px"></span>
+          <div><strong style="color:var(--text-primary)">Parameter names</strong> — <span style="color:var(--text-secondary);font-size:13px">Come after the <code style="color:var(--text-muted)">?</code>. Parameters that start with <code style="color:#7dd3fc">_</code> (underscore) are FHIR system parameters that work on any resource. Others like <code style="color:#7dd3fc">status</code> are resource-specific.</span></div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start">
+          <span style="width:14px;height:14px;border-radius:3px;background:#86efac;flex-shrink:0;margin-top:3px"></span>
+          <div><strong style="color:var(--text-primary)">Parameter values</strong> — <span style="color:var(--text-secondary);font-size:13px">The filter values. Multiple parameters are joined by <code style="color:var(--text-muted)">&amp;</code>.</span></div>
+        </div>
+      </div>
+
+      <!-- Common params table -->
+      <div style="margin-top:24px">
+        <h4 style="font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px">Common FHIR search parameters</h4>
+        <table class="field-table">
+          <thead><tr>
+            <th style="text-align:left;padding:10px 14px;background:var(--bg-surface);color:var(--text-muted);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px">Parameter</th>
+            <th style="text-align:left;padding:10px 14px;background:var(--bg-surface);color:var(--text-muted);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px">Example</th>
+            <th style="text-align:left;padding:10px 14px;background:var(--bg-surface);color:var(--text-muted);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px">What it does</th>
+          </tr></thead>
+          <tbody>
+            <tr><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-code);font-family:'JetBrains Mono',monospace;font-size:12px">_count</td><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:#86efac;font-family:'JetBrains Mono',monospace;font-size:12px">_count=5</td><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-secondary);font-size:13px">Limit how many results to return. Like "show me 5 records."</td></tr>
+            <tr><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-code);font-family:'JetBrains Mono',monospace;font-size:12px">_sort</td><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:#86efac;font-family:'JetBrains Mono',monospace;font-size:12px">_sort=-_lastUpdated</td><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-secondary);font-size:13px">Sort results. A minus sign (−) means descending (newest first).</td></tr>
+            <tr><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-code);font-family:'JetBrains Mono',monospace;font-size:12px">_format</td><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:#86efac;font-family:'JetBrains Mono',monospace;font-size:12px">_format=json</td><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-secondary);font-size:13px">Tell the server to return JSON (vs. XML). Always included.</td></tr>
+            <tr><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-code);font-family:'JetBrains Mono',monospace;font-size:12px">status</td><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:#86efac;font-family:'JetBrains Mono',monospace;font-size:12px">status=final</td><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-secondary);font-size:13px">Filter by status. Values differ by resource type (active, final, finished…).</td></tr>
+            <tr><td style="padding:10px 14px;color:var(--text-code);font-family:'JetBrains Mono',monospace;font-size:12px">_id</td><td style="padding:10px 14px;color:#86efac;font-family:'JetBrains Mono',monospace;font-size:12px">_id=592821</td><td style="padding:10px 14px;color:var(--text-secondary);font-size:13px">Fetch one specific record by its FHIR ID. Returns a single resource.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════
+       SECTION 5 — MINI QUIZ
+  ════════════════════════════════════════ -->
+  <section class="section" style="border-top:1px solid var(--border)">
+    <div class="section-eyebrow">🧠 Knowledge Check</div>
+    <div class="section-title">Test what you've learned about FHIR APIs</div>
+    <p class="section-subtitle">Answer all three questions — click any option to see instant feedback.</p>
+    <div class="quiz-wrapper" id="apiQuiz"></div>
+    <div id="apiQuiz-score" style="display:none;margin-top:16px"></div>
+  </section>
+
+  <!-- COMPLETION -->
+  <div style="margin-top:48px;padding:40px;background:linear-gradient(135deg,rgba(139,92,246,0.08),rgba(20,184,166,0.06));border:1px solid rgba(139,92,246,0.2);border-radius:var(--radius-xl);text-align:center">
+    <div style="font-size:48px;margin-bottom:16px">🎓</div>
+    <h2 style="font-size:24px;font-weight:800;color:var(--text-primary);margin-bottom:8px">You've completed all 6 modules!</h2>
+    <p style="color:var(--text-secondary);font-size:15px;max-width:560px;margin:0 auto 28px;line-height:1.7">You can now read FHIR JSON, understand resources, and build real API queries. You're ready for any healthcare IT conversation.</p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+      <a href="../index.html" class="btn btn-outline">← Back to Home</a>
+      <a href="what-is-api.html" class="btn btn-primary">🔄 Review from Start</a>
+    </div>
+  </div>
+
+  <!-- bottom nav -->
+  <section class="section" style="border-top:1px solid var(--border)">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px">
+      <a href="examples.html" class="btn btn-outline">← JSON Examples</a>
+      <a href="../index.html" class="btn btn-primary">🏠 Back to Home</a>
+    </div>
+  </section>
+
+</div>
+
+<footer class="footer">
+  <p>FHIR Learn · Module 6 of 6 · <a href="../index.html">Back to home</a></p>
+</footer>
+
+<script src="../js/app.js"></script>
+<script>
+// ============================================================
+// CONTEXT TIPS PER RESOURCE
+// ============================================================
+const RESOURCE_TIPS = {
+  Patient:           '<strong>Patient</strong> holds demographics — name, DOB, gender, address. It does NOT contain clinical data. Lab results, diagnoses, and meds link back to Patient by ID.',
+  Observation:       '<strong>Observation</strong> is the most common FHIR resource. It holds any measured value: vitals, lab results, survey scores. Results use <strong>LOINC</strong> codes to identify what was measured.',
+  Condition:         '<strong>Condition</strong> stores diagnoses and medical problems. They use <strong>ICD-10</strong> and <strong>SNOMED CT</strong> codes. Check <em>clinicalStatus</em> to see if a condition is active or resolved.',
+  MedicationRequest: '<strong>MedicationRequest</strong> is a prescription. Look for <em>medicationCodeableConcept</em> to find the drug name (using RxNorm codes) and <em>dosageInstruction</em> for how to take it.',
+  Encounter:         '<strong>Encounter</strong> represents a patient visit — office, ER, telehealth, or inpatient. The <em>class</em> field tells you the visit type: AMB (outpatient), IMP (inpatient), EMER (emergency).',
+};
+
+// ============================================================
+// URL BUILDER
+// ============================================================
+const BASE = 'https://hapi.fhir.org/baseR4';
+
+function buildUrl() {
+  const resource = document.getElementById('selResource').value;
+  const count    = document.getElementById('selCount').value;
+  const status   = document.getElementById('selStatus').value;
+  const sort     = document.getElementById('selSort').value;
+  const id       = document.getElementById('inpId').value.trim();
+
+  if (id) {
+    return { url: `${BASE}/${resource}/${id}?_format=json`, byId: true, resource };
+  }
+
+  const params = [`_count=${count}`, '_format=json'];
+  if (status) params.push(`status=${status}`);
+  if (sort)   params.push(`_sort=${sort}`);
+
+  return { url: `${BASE}/${resource}?${params.join('&')}`, byId: false, resource, params, count, status };
+}
+
+function colorUrl(info) {
+  if (info.byId) {
+    const id = document.getElementById('inpId').value.trim();
+    return `<span class="url-base">${BASE}/</span><span class="url-resource">${info.resource}</span><span class="url-base">/${id}?</span><span class="url-key">_format</span><span class="url-eq">=</span><span class="url-val">json</span>`;
+  }
+
+  const resource = document.getElementById('selResource').value;
+  const count    = document.getElementById('selCount').value;
+  const status   = document.getElementById('selStatus').value;
+  const sort     = document.getElementById('selSort').value;
+
+  let html = `<span class="url-base">${BASE}/</span><span class="url-resource">${resource}</span><span class="url-q">?</span>`;
+  html += `<span class="url-key">_count</span><span class="url-eq">=</span><span class="url-val">${count}</span>`;
+  html += `<span class="url-amp">&amp;</span><span class="url-key">_format</span><span class="url-eq">=</span><span class="url-val">json</span>`;
+  if (status) html += `<span class="url-amp">&amp;</span><span class="url-key">status</span><span class="url-eq">=</span><span class="url-val">${status}</span>`;
+  if (sort)   html += `<span class="url-amp">&amp;</span><span class="url-key">_sort</span><span class="url-eq">=</span><span class="url-val">${sort}</span>`;
+  return html;
+}
+
+function onBuilderChange() {
+  const info = buildUrl();
+  document.getElementById('urlPreview').innerHTML = colorUrl(info);
+
+  // Update context tip
+  const resource = document.getElementById('selResource').value;
+  document.getElementById('contextTip').innerHTML = '💡 ' + RESOURCE_TIPS[resource];
+
+  // Update filename in response pane
+  document.getElementById('respFilename').textContent = info.byId
+    ? `${info.resource}_by_id.json`
+    : `${info.resource}_search.json`;
+}
+
+// ============================================================
+// SEND REQUEST
+// ============================================================
+async function sendRequest() {
+  const info = buildUrl();
+  const bar  = document.getElementById('loadingBar');
+  const err  = document.getElementById('fetchError');
+  const pre  = document.getElementById('respPre');
+  const meta = document.getElementById('respMeta');
+  const explBox = document.getElementById('bundleExplain');
+  const btn  = document.getElementById('sendBtn');
+
+  bar.style.display = 'block';
+  err.style.display = 'none';
+  meta.style.display = 'none';
+  explBox.style.display = 'none';
+  btn.disabled = true;
+  pre.innerHTML = '<span style="color:var(--text-muted)">Contacting hapi.fhir.org...</span>';
+
+  const t0 = Date.now();
+  try {
+    const resp = await fetch(info.url);
+    const elapsed = Date.now() - t0;
+    const data = await resp.json();
+
+    // Meta bar
+    const isBundle = data.resourceType === 'Bundle';
+    const count    = isBundle ? (data.entry ? data.entry.length : 0) : 1;
+    const total    = isBundle ? (data.total !== undefined ? data.total : '?') : 1;
+    const okClass  = resp.ok ? 'pill-ok' : 'pill-err';
+
+    meta.innerHTML = `
+      <div class="resp-pill ${okClass}">● HTTP ${resp.status} ${resp.ok ? 'OK' : 'Error'}</div>
+      <div class="resp-pill">📦 ${count} record${count !== 1 ? 's' : ''} returned</div>
+      <div class="resp-pill">📊 ${total} total on server</div>
+      <div class="resp-pill">⏱ ${elapsed} ms</div>
+    `;
+    meta.style.display = 'flex';
+
+    pre.innerHTML = syntaxHighlight(JSON.stringify(data, null, 2));
+
+    if (isBundle) explBox.style.display = 'block';
+
+  } catch(e) {
+    err.textContent = '⚠️ Could not reach hapi.fhir.org: ' + e.message + '. It\'s a public server — try again in a moment.';
+    err.style.display = 'block';
+    pre.innerHTML = '<span style="color:var(--text-muted)">No data loaded.</span>';
+  } finally {
+    bar.style.display = 'none';
+    btn.disabled = false;
+  }
+}
+
+// ============================================================
+// CHALLENGE CHECKER
+// ============================================================
+const CHALLENGES = [
+  {
+    // Challenge 1: Patient, _count=5
+    check(info) {
+      const resource = document.getElementById('selResource').value;
+      const count    = document.getElementById('selCount').value;
+      const id       = document.getElementById('inpId').value.trim();
+      return resource === 'Patient' && count === '5' && !id;
+    },
+    pass: '✅ Correct! Your URL targets Patient with _count=5 — exactly right.',
+    fail: '❌ Not quite. Make sure: Resource = Patient, _count = 5, and the ID field is empty.',
+  },
+  {
+    // Challenge 2: Observation + status=final
+    check(info) {
+      const resource = document.getElementById('selResource').value;
+      const status   = document.getElementById('selStatus').value;
+      const id       = document.getElementById('inpId').value.trim();
+      return resource === 'Observation' && status === 'final' && !id;
+    },
+    pass: '✅ Correct! Observation with status=final — that\'s exactly how you filter for official lab results.',
+    fail: '❌ Not quite. Make sure: Resource = Observation, Status = final, ID field is empty.',
+  },
+  {
+    // Challenge 3: MedicationRequest + _count=10 + sort=-_lastUpdated
+    check(info) {
+      const resource = document.getElementById('selResource').value;
+      const count    = document.getElementById('selCount').value;
+      const sort     = document.getElementById('selSort').value;
+      const id       = document.getElementById('inpId').value.trim();
+      return resource === 'MedicationRequest' && count === '10' && sort === '-_lastUpdated' && !id;
+    },
+    pass: '✅ Correct! MedicationRequest, _count=10, _sort=-_lastUpdated — newest 10 prescriptions.',
+    fail: '❌ Not quite. Make sure: Resource = MedicationRequest, _count = 10, _sort = Newest first (-_lastUpdated).',
+  }
+];
+
+function checkChallenge(n) {
+  const c = CHALLENGES[n - 1];
+  const info = buildUrl();
+  const passed = c.check(info);
+  const el = document.getElementById(`ch${n}-status`);
+  const card = document.getElementById(`ch${n}`);
+
+  if (passed) {
+    el.innerHTML = `<span class="status-pass">${c.pass}</span>`;
+    card.classList.add('solved');
+  } else {
+    el.innerHTML = `<span class="status-fail">${c.fail}</span>`;
+    card.classList.remove('solved');
+  }
+}
+
+// ============================================================
+// MINI QUIZ
+// ============================================================
+const API_QUIZ = [
+  {
+    question: 'What does the <code>_count=5</code> parameter do in a FHIR query?',
+    options: [
+      'It counts how many patients are in the database',
+      'It limits the response to return at most 5 records',
+      'It repeats the request 5 times for reliability',
+      'It means the 5th version of this resource'
+    ],
+    correct: 1,
+    explanation: '_count is a pagination parameter — it tells the server "only give me 5 records per page." The server may have thousands of matching records, but your response will be limited to 5.'
+  },
+  {
+    question: 'A FHIR URL ends with <code>?_sort=-_lastUpdated</code>. What does the minus sign (−) mean?',
+    options: [
+      'It removes the lastUpdated field from the response',
+      'It means sort in descending order (newest records first)',
+      'It subtracts 1 from the lastUpdated value',
+      'It is a typo — the minus sign has no effect'
+    ],
+    correct: 1,
+    explanation: 'In FHIR search, a leading minus sign means descending order. So -_lastUpdated = sort by lastUpdated, newest first. Without the minus it would be ascending (oldest first).'
+  },
+  {
+    question: 'When you search for multiple records, FHIR wraps the response in a "Bundle". Where are the actual records inside a Bundle?',
+    options: [
+      'Directly at the top level of the JSON response',
+      'Inside the "data" field',
+      'Inside the "entry" array — each entry has a "resource" field with the actual record',
+      'In a separate request you have to make after receiving the Bundle'
+    ],
+    correct: 2,
+    explanation: 'A Bundle is a container. The entry array holds the results. Each element in entry has a resource field — that\'s where the actual Patient, Observation, etc. lives. You\'ll navigate: bundle.entry[0].resource to get the first record.'
+  }
+];
+
+// ============================================================
+// INIT
+// ============================================================
+document.addEventListener('DOMContentLoaded', () => {
+  onBuilderChange();         // set initial URL preview + tip
+  initQuiz('apiQuiz', API_QUIZ);
+});
+</script>
+</body>
+</html>
